@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
-
 const app = express();
+
 const PORT = process.env.PORT || 3000;
 
 // Servir les fichiers statiques
@@ -12,6 +12,7 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+// Démarrer le serveur
 app.listen(PORT, () => {
-    console.log(`LexiMarket accessible sur le port ${PORT}`);
+    console.log(`LexiMarket server running on port ${PORT}`);
 });
