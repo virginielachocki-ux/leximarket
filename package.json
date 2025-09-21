@@ -1,0 +1,12 @@
+{
+  "name": "leximarket",
+  "version": "1.0.0",
+  "description": "Jeu de vocabulaire marketing pour BTS MCO",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}

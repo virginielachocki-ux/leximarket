@@ -1,0 +1,1572 @@
+<div class="form-group">
+                        <label for="newClues">Indices (un par ligne) :</label>
+                        <textarea id="newClues" placeholder="Logo&#10;Nike&#10;Enseigne&#10;Identité" rows="4"></textarea>
+                        <small style="color: #666;">Donnez 4 indices du plus facile au plus difficile</small>
+                    </div>        <!-- Écran d'attente salle privée -->
+        <div class="screen" id="waitingScreen">
+            <div class="room-info">
+                <h2>Salle créée !</h2>
+                <div class="room-code" id="displayRoomCode">ABCD1234</div>
+                <p>Partagez ce code avec votre partenaire</p>
+                <div class="waiting-message">En attente du second joueur...</div>
+                <button class="btn btn-secondary btn-small" onclick="backToLobby()">Retour</button>
+            </div>
+        </div><!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LexiMarket - Jeu de Vocabulaire Marketing BTS MCO</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .game-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            max-width: 800px;
+            width: 90%;
+            min-height: 600px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .admin-btn {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .login-form, .lobby-form, .admin-form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 14px;
+            width: auto;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #e74c3c 100%);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+        }
+
+        .room-info {
+            background: #e8f4f8;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .room-code {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+            margin: 10px 0;
+            letter-spacing: 3px;
+        }
+
+        .waiting-message {
+            color: #666;
+            font-style: italic;
+            margin: 10px 0;
+        }
+
+        .player-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+
+        .player {
+            text-align: center;
+        }
+
+        .player h3 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .player .score {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .current-turn {
+            background: #d4edda !important;
+            border-left: 4px solid #28a745;
+        }
+
+        .game-area {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .word-to-guess {
+            background: #667eea;
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+
+        .word-hidden {
+            background: #e1e5e9;
+            color: #666;
+        }
+
+        .timer {
+            font-size: 48px;
+            font-weight: bold;
+            color: #e74c3c;
+            margin-bottom: 20px;
+        }
+
+        .timer.warning {
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .clues-section, .guess-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .clues-list {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .clue {
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .turns-left {
+            font-size: 18px;
+            color: #e74c3c;
+            margin-bottom: 10px;
+        }
+
+        .difficulty-display {
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .difficulty-easy { color: #28a745; }
+        .difficulty-medium { color: #fd7e14; }
+        .difficulty-hard { color: #dc3545; }
+
+        .results {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .score-breakdown {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .score-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .word-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .word-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            background: #f8f9fa;
+            margin-bottom: 8px;
+            border-radius: 6px;
+        }
+
+        .word-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .word-details {
+            flex: 1;
+            text-align: left;
+        }
+
+        .word-text {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .word-definition {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .word-difficulty {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .export-import {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .export-import h4 {
+            margin-bottom: 10px;
+            color: #856404;
+        }
+
+        .leaderboard {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 600px) {
+            .game-container {
+                padding: 20px;
+            }
+            
+            .player-info {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .score-breakdown {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-btn {
+                position: relative;
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <h1>🎯 LexiMarket</h1>
+            <p>Jeu coopératif de vocabulaire marketing pour BTS MCO</p>
+            <button class="admin-btn" onclick="showAdminPanel()">⚙️ Admin</button>
+        </div>
+
+        <!-- Écran de connexion -->
+        <div class="screen active" id="loginScreen">
+            <div class="login-form">
+                <div class="form-group">
+                    <label for="playerName">Nom de l'étudiant :</label>
+                    <input type="text" id="playerName" placeholder="Votre nom">
+                </div>
+                <button class="btn" onclick="login()">Se connecter</button>
+                
+                <div class="leaderboard" id="loginLeaderboard">
+                    <h3>🏆 Classement</h3>
+                    <div id="leaderboardList"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Écran du lobby -->
+        <div class="screen" id="lobbyScreen">
+            <div class="lobby-form">
+                <h2>Bienvenue, <span id="currentPlayerName"></span>!</h2>
+                <p style="margin: 20px 0;">Score total : <span id="playerTotalScore">0</span> points</p>
+                
+                <div class="form-group">
+                    <label for="roomCodeInput">Code de salle (pour rejoindre) :</label>
+                    <input type="text" id="roomCodeInput" placeholder="Ex: ABCD1234">
+                </div>
+                
+                <button class="btn" onclick="startTrainingMode()">🎯 Mode Entraînement</button>
+                <button class="btn btn-secondary" onclick="startMatchmaking()">🔍 Rechercher un adversaire</button>
+                <button class="btn btn-secondary" onclick="createRoom()">Créer une salle privée</button>
+                <button class="btn btn-secondary" onclick="joinRoom()">Rejoindre une salle</button>
+            </div>
+        </div>
+
+        <!-- Écran de matchmaking -->
+        <div class="screen" id="matchmakingScreen">
+            <div class="room-info">
+                <h2>🎯 Recherche d'adversaire</h2>
+                <div style="font-size: 64px; margin: 20px 0;">⏳</div>
+                <div class="waiting-message">Recherche d'un autre joueur...</div>
+                <div id="queuePosition" style="margin: 15px 0; font-weight: bold; color: #667eea;">Position dans la file : 1</div>
+                <div id="estimatedTime" style="margin: 10px 0; color: #666; font-size: 14px;">Temps d'attente estimé : ~30s</div>
+                <div id="onlineCount" style="margin: 10px 0; color: #28a745; font-size: 14px;">🟢 Joueurs en ligne : 5</div>
+                <button class="btn btn-secondary btn-small" onclick="cancelMatchmaking()">Annuler la recherche</button>
+            </div>
+        </div>
+
+        <!-- Écran de jeu -->
+        <div class="screen" id="gameScreen">
+            <div class="player-info">
+                <div class="player" id="player1Info">
+                    <h3 id="player1Name">Joueur 1</h3>
+                    <div class="score" id="player1Score">0</div>
+                </div>
+                <div class="player" id="player2Info">
+                    <h3 id="player2Name">Joueur 2</h3>
+                    <div class="score" id="player2Score">0</div>
+                </div>
+            </div>
+
+            <div class="game-area">
+                <div class="difficulty-display" id="difficultyDisplay"></div>
+                <div class="timer" id="timer">60</div>
+                <div class="word-to-guess" id="wordToGuess">SEGMENTATION</div>
+                
+                <div class="turns-left" id="turnsLeft">Tours restants : 4</div>
+                
+                <div class="clues-section" id="cluesSection">
+                    <h3>Indices donnés :</h3>
+                    <div class="clues-list" id="cluesList"></div>
+                    
+                    <div class="form-group" id="clueInputSection">
+                        <input type="text" id="clueInput" placeholder="Donnez un indice (un seul mot)" maxlength="25">
+                        <button class="btn btn-small" onclick="giveClue()">Donner l'indice</button>
+                    </div>
+                </div>
+
+                <div class="guess-section" id="guessSection" style="display: none;">
+                    <h3>À vous de deviner !</h3>
+                    <div class="form-group">
+                        <input type="text" id="guessInput" placeholder="Votre réponse">
+                    </div>
+                    <button class="btn btn-small btn-success" onclick="makeGuess()">Deviner</button>
+                    <button class="btn btn-small" onclick="skipTurn()">Passer le tour</button>
+                </div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn btn-small btn-danger" onclick="endGame()">Abandonner</button>
+            </div>
+        </div>
+
+        <!-- Écran de résultats -->
+        <div class="screen" id="resultsScreen">
+            <div class="results">
+                <h2 id="resultTitle">Mot trouvé !</h2>
+                <p id="resultMessage">Félicitations !</p>
+                
+                <div class="score-breakdown">
+                    <div class="score-item">
+                        <h4>Temps utilisé</h4>
+                        <p id="timeUsed">30s</p>
+                    </div>
+                    <div class="score-item">
+                        <h4>Indices utilisés</h4>
+                        <p id="cluesUsed">2/4</p>
+                    </div>
+                    <div class="score-item">
+                        <h4>Bonus difficulté</h4>
+                        <p id="difficultyBonus">+50</p>
+                    </div>
+                    <div class="score-item">
+                        <h4>Points gagnés</h4>
+                        <p id="pointsEarned">150</p>
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="nextRound()">Manche suivante</button>
+                <button class="btn btn-small btn-secondary" onclick="backToLobby()">Retour au lobby</button>
+            </div>
+        </div>
+
+        <!-- Écran d'administration -->
+        <div class="screen" id="adminScreen">
+            <div class="admin-form">
+                <h2>🔧 Administration des mots</h2>
+                
+                <!-- Ajouter un mot -->
+                <div style="background: #e8f5e8; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                    <h3>➕ Ajouter un nouveau mot</h3>
+                    <div class="form-group">
+                        <label for="newWord">Mot :</label>
+                        <input type="text" id="newWord" placeholder="Ex: SEGMENTATION" style="text-transform: uppercase;">
+                    </div>
+                    <div class="form-group">
+                        <label for="newDefinition">Définition/Indice :</label>
+                        <textarea id="newDefinition" placeholder="Ex: Division du marché en groupes homogènes"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="newDifficulty">Difficulté :</label>
+                        <select id="newDifficulty">
+                            <option value="easy">Facile</option>
+                            <option value="medium">Moyen</option>
+                            <option value="hard">Difficile</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-success" onclick="addWord()">Ajouter le mot</button>
+                </div>
+
+                <!-- Export/Import -->
+                <div class="export-import">
+                    <h4>📁 Sauvegarde & Import</h4>
+                    <button class="btn btn-small btn-secondary" onclick="exportWords()">Exporter la liste</button>
+                    <div class="form-group" style="margin-top: 10px;">
+                        <input type="file" id="importFile" accept=".json" style="padding: 5px;">
+                        <button class="btn btn-small btn-secondary" onclick="importWords()">Importer</button>
+                    </div>
+                </div>
+
+                <!-- Liste des mots -->
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                    <h3>📝 Liste des mots (<span id="wordCount">0</span>)</h3>
+                    <div class="word-list" id="wordList"></div>
+                </div>
+
+                <button class="btn btn-secondary" onclick="backToLogin()">Retour au jeu</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Base de données de vocabulaire marketing (initiale)
+        let marketingVocabulary = JSON.parse(localStorage.getItem('leximarketWords') || JSON.stringify({
+            easy: [
+                { 
+                    word: "MARQUE", 
+                    definition: "Nom commercial d'un produit ou service",
+                    clues: ["Logo", "Nike", "Enseigne", "Identité"]
+                },
+                { 
+                    word: "PRIX", 
+                    definition: "Valeur monétaire demandée pour un bien",
+                    clues: ["Euros", "Coût", "Tarif", "Montant"]
+                },
+                { 
+                    word: "CLIENT", 
+                    definition: "Personne qui achète un produit ou service",
+                    clues: ["Acheteur", "Consommateur", "Personne", "Magasin"]
+                },
+                { 
+                    word: "VENTE", 
+                    definition: "Action de céder un bien contre paiement",
+                    clues: ["Commerce", "Échanger", "Argent", "Transaction"]
+                },
+                { 
+                    word: "PRODUIT", 
+                    definition: "Bien ou service proposé sur le marché",
+                    clues: ["Article", "Marchandise", "Objet", "Service"]
+                }
+            ],
+            medium: [
+                { 
+                    word: "SEGMENTATION", 
+                    definition: "Division du marché en groupes homogènes",
+                    clues: ["Diviser", "Groupes", "Cibler", "Catégories"]
+                },
+                { 
+                    word: "POSITIONNEMENT", 
+                    definition: "Place du produit dans l'esprit du consommateur",
+                    clues: ["Image", "Perception", "Esprit", "Concurrence"]
+                },
+                { 
+                    word: "MERCHANDISING", 
+                    definition: "Techniques de présentation des produits en magasin",
+                    clues: ["Vitrine", "Présentation", "Rayon", "Exposition"]
+                },
+                { 
+                    word: "FIDELISATION", 
+                    definition: "Stratégies pour fidéliser la clientèle",
+                    clues: ["Fidélité", "Retenir", "Carte", "Récompense"]
+                },
+                { 
+                    word: "FRANCHISE", 
+                    definition: "Contrat de distribution sous une enseigne",
+                    clues: ["McDonald", "Contrat", "Enseigne", "Réseau"]
+                }
+            ],
+            hard: [
+                { 
+                    word: "OMNICANALITE", 
+                    definition: "Stratégie multicanale intégrée et cohérente",
+                    clues: ["Canaux", "Internet", "Magasin", "Cohérence"]
+                },
+                { 
+                    word: "NEUROMARKETING", 
+                    definition: "Application des neurosciences au marketing",
+                    clues: ["Cerveau", "Science", "Émotions", "Psychologie"]
+                },
+                { 
+                    word: "RETARGETING", 
+                    definition: "Reciblage publicitaire des visiteurs web",
+                    clues: ["Publicité", "Internet", "Cookies", "Recibler"]
+                },
+                { 
+                    word: "CROSSELLING", 
+                    definition: "Vente de produits complémentaires",
+                    clues: ["Complémentaire", "Addition", "Suggestion", "Plus"]
+                },
+                { 
+                    word: "STORYTELLING", 
+                    definition: "Technique narrative en communication marketing",
+                    clues: ["Histoire", "Raconter", "Émotion", "Récit"]
+                }
+            ]
+        }));
+
+        // Variables du jeu
+        let currentPlayer = null;
+        let currentRoom = null;
+        let matchmakingTimer = null;
+        let isTrainingMode = false;
+        let gameState = {
+            player1: { name: "", score: 0 },
+            player2: { name: "", score: 0 },
+            currentWord: null,
+            difficulty: "",
+            clues: [],
+            turnsLeft: 4,
+            timeLeft: 60,
+            timer: null,
+            startTime: null,
+            isGuesser: false,
+            currentGuesser: 1,
+            isMyTurn: true
+        };
+
+        // Système de stockage
+        let playerDatabase = JSON.parse(localStorage.getItem('leximarketDB') || '{}');
+        let rooms = JSON.parse(localStorage.getItem('leximarketRooms') || '{}');
+        let matchmakingQueue = JSON.parse(localStorage.getItem('leximarketQueue') || '[]');
+
+        // Fonctions utilitaires
+        function saveData() {
+            localStorage.setItem('leximarketDB', JSON.stringify(playerDatabase));
+            localStorage.setItem('leximarketWords', JSON.stringify(marketingVocabulary));
+            localStorage.setItem('leximarketRooms', JSON.stringify(rooms));
+            localStorage.setItem('leximarketQueue', JSON.stringify(matchmakingQueue));
+        }
+
+        function generateRoomCode() {
+            return Math.random().toString(36).substr(2, 8).toUpperCase();
+        }
+
+        function simulateOnlineCount() {
+            // Simulation du nombre de joueurs en ligne (entre 3 et 12)
+            return Math.floor(Math.random() * 10) + 3;
+        }
+
+        function cleanupOldData() {
+            const now = Date.now();
+            
+            // Nettoyer les anciennes salles (plus de 1 heure)
+            Object.keys(rooms).forEach(roomCode => {
+                if (now - rooms[roomCode].createdAt > 3600000) {
+                    delete rooms[roomCode];
+                }
+            });
+            
+            // Nettoyer les anciennes entrées de la queue (plus de 5 minutes)
+            matchmakingQueue = matchmakingQueue.filter(entry => 
+                now - entry.timestamp < 300000
+            );
+            
+            saveData();
+        }
+
+        function getRandomWord() {
+            const difficulties = ['easy', 'medium', 'hard'];
+            const difficulty = difficulties[Math.floor(Math.random() * difficulties.length)];
+            const words = marketingVocabulary[difficulty];
+            if (words.length === 0) {
+                // Fallback si aucun mot dans cette difficulté
+                const allWords = [...marketingVocabulary.easy, ...marketingVocabulary.medium, ...marketingVocabulary.hard];
+                if (allWords.length === 0) return null;
+                const randomWord = allWords[Math.floor(Math.random() * allWords.length)];
+                return { ...randomWord, difficulty: 'medium' };
+            }
+            const randomWord = words[Math.floor(Math.random() * words.length)];
+            return { ...randomWord, difficulty };
+        }
+
+        function updateLeaderboard() {
+            const leaderboard = Object.entries(playerDatabase)
+                .sort((a, b) => b[1].totalScore - a[1].totalScore)
+                .slice(0, 5);
+            
+            const leaderboardHTML = leaderboard.map((player, index) => 
+                `<div class="leaderboard-item">
+                    <span>${index + 1}. ${player[0]}</span>
+                    <span>${player[1].totalScore} pts</span>
+                </div>`
+            ).join('');
+            
+            document.getElementById('leaderboardList').innerHTML = leaderboardHTML || '<div class="leaderboard-item"><span>Aucun score encore</span></div>';
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        // Fonctions d'administration
+        function showAdminPanel() {
+            updateWordList();
+            showScreen('adminScreen');
+        }
+
+        function addWord() {
+            const word = document.getElementById('newWord').value.trim().toUpperCase();
+            const definition = document.getElementById('newDefinition').value.trim();
+            const difficulty = document.getElementById('newDifficulty').value;
+            const cluesText = document.getElementById('newClues').value.trim();
+
+            if (!word || !definition) {
+                alert('Veuillez remplir au moins le mot et la définition');
+                return;
+            }
+
+            // Traitement des indices
+            let clues = [];
+            if (cluesText) {
+                clues = cluesText.split('\n')
+                    .map(clue => clue.trim())
+                    .filter(clue => clue.length > 0)
+                    .slice(0, 4); // Maximum 4 indices
+            }
+            
+            // Indices par défaut si aucun fourni
+            if (clues.length === 0) {
+                clues = ["Indice1", "Indice2", "Indice3", "Indice4"];
+            }
+            
+            // Compléter jusqu'à 4 indices si nécessaire
+            while (clues.length < 4) {
+                clues.push(`Indice${clues.length + 1}`);
+            }
+
+            // Vérifier si le mot existe déjà
+            const allWords = [...marketingVocabulary.easy, ...marketingVocabulary.medium, ...marketingVocabulary.hard];
+            if (allWords.some(w => w.word === word)) {
+                alert('Ce mot existe déjà dans la base');
+                return;
+            }
+
+            marketingVocabulary[difficulty].push({ word, definition, clues });
+            saveData();
+
+            // Réinitialiser le formulaire
+            document.getElementById('newWord').value = '';
+            document.getElementById('newDefinition').value = '';
+            document.getElementById('newClues').value = '';
+            document.getElementById('newDifficulty').value = 'easy';
+
+            updateWordList();
+            alert('Mot ajouté avec succès !');
+        }
+
+        function deleteWord(difficulty, index) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce mot ?')) {
+                marketingVocabulary[difficulty].splice(index, 1);
+                saveData();
+                updateWordList();
+            }
+        }
+
+        function updateWordList() {
+            const wordListContainer = document.getElementById('wordList');
+            let totalWords = 0;
+            let html = '';
+
+            ['easy', 'medium', 'hard'].forEach(difficulty => {
+                const words = marketingVocabulary[difficulty];
+                totalWords += words.length;
+                
+                words.forEach((wordObj, index) => {
+                    const cluesPreview = wordObj.clues ? wordObj.clues.slice(0, 2).join(', ') + '...' : 'Pas d\'indices';
+                    html += `
+                        <div class="word-item">
+                            <div class="word-details">
+                                <div class="word-text">${wordObj.word}</div>
+                                <div class="word-definition">${wordObj.definition}</div>
+                                <div style="font-size: 12px; color: #999; margin-top: 4px;">Indices: ${cluesPreview}</div>
+                            </div>
+                            <div>
+                                <span class="word-difficulty difficulty-${difficulty}">${difficulty.toUpperCase()}</span>
+                                <button class="btn btn-small btn-danger" onclick="deleteWord('${difficulty}', ${index})">🗑️</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            });
+
+            wordListContainer.innerHTML = html || '<p style="text-align: center; color: #666;">Aucun mot dans la base</p>';
+            document.getElementById('wordCount').textContent = totalWords;
+        }
+
+        function exportWords() {
+            const dataStr = JSON.stringify(marketingVocabulary, null, 2);
+            const dataBlob = new Blob([dataStr], {type:'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'leximarket_vocabulaire.json';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        function importWords() {
+            const fileInput = document.getElementById('importFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Veuillez sélectionner un fichier');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedWords = JSON.parse(e.target.result);
+                    
+                    // Validation de base
+                    if (!importedWords.easy || !importedWords.medium || !importedWords.hard) {
+                        throw new Error('Format invalide');
+                    }
+
+                    if (confirm('Cette action remplacera tous les mots existants. Continuer ?')) {
+                        marketingVocabulary = importedWords;
+                        saveData();
+                        updateWordList();
+                        alert('Import réussi !');
+                    }
+                } catch (error) {
+                    alert('Erreur lors de l\'import : fichier invalide');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Fonctions de mode entraînement
+        function startTrainingMode() {
+            isTrainingMode = true;
+            gameState.player1.name = currentPlayer;
+            gameState.player2.name = "🤖 Prof Bot";
+            gameState.player1.score = 0;
+            gameState.player2.score = 0;
+            
+            document.getElementById('player1Name').textContent = gameState.player1.name;
+            document.getElementById('player2Name').textContent = gameState.player2.name;
+            
+            startTrainingRound();
+            showScreen('gameScreen');
+        }
+
+        function startTrainingRound() {
+            const wordData = getRandomWord();
+            if (!wordData) {
+                alert('Aucun mot disponible dans la base de données !');
+                backToLobby();
+                return;
+            }
+            
+            gameState.currentWord = wordData;
+            gameState.clues = [];
+            gameState.turnsLeft = 4;
+            gameState.timeLeft = 90; // Plus de temps en mode entraînement
+            gameState.isGuesser = true; // L'étudiant devine toujours
+            
+            // Interface pour le mode entraînement
+            document.getElementById('difficultyDisplay').innerHTML = 
+                `<span class="difficulty-${wordData.difficulty}">🎯 Entraînement - ${wordData.difficulty.toUpperCase()}</span>`;
+            
+            document.getElementById('wordToGuess').textContent = `${wordData.word.length} lettres`;
+            document.getElementById('wordToGuess').classList.add('word-hidden');
+            
+            // Masquer l'interface de donnation d'indices
+            document.getElementById('clueInputSection').style.display = 'none';
+            document.getElementById('guessSection').style.display = 'block';
+            
+            // Mettre en évidence que c'est le tour de l'étudiant
+            document.getElementById('player1Info').classList.add('current-turn');
+            document.getElementById('player2Info').classList.remove('current-turn');
+            
+            updateGameDisplay();
+            startTimer();
+            
+            // Le bot commence à donner des indices
+            setTimeout(() => {
+                giveBotClue();
+            }, 2000);
+        }
+
+        function giveBotClue() {
+            if (gameState.turnsLeft <= 0 || !gameState.currentWord) return;
+            
+            // Prendre le prochain indice prédéfini
+            const availableClues = gameState.currentWord.clues || ["Mot", "Marketing", "Commerce", "Difficile"];
+            const clueIndex = 4 - gameState.turnsLeft;
+            const clue = availableClues[clueIndex] || availableClues[Math.floor(Math.random() * availableClues.length)];
+            
+            gameState.clues.push(clue);
+            gameState.turnsLeft--;
+            
+            updateGameDisplay();
+            
+            // Animation d'ajout d'indice
+            const cluesList = document.getElementById('cluesList');
+            const lastClue = cluesList.lastElementChild;
+            if (lastClue) {
+                lastClue.style.animation = 'none';
+                setTimeout(() => {
+                    lastClue.style.animation = 'pulse 0.5s';
+                }, 10);
+            }
+            
+            if (gameState.turnsLeft <= 0) {
+                setTimeout(() => {
+                    endRound(false, "🤖 Tous les indices ont été donnés !");
+                }, 1000);
+            }
+        }
+
+        function makeTrainingGuess() {
+            const guessInput = document.getElementById('guessInput');
+            const guess = guessInput.value.trim().toLowerCase();
+            
+            if (!guess) {
+                alert('Veuillez entrer votre réponse');
+                return;
+            }
+            
+            if (guess === gameState.currentWord.word.toLowerCase()) {
+                endRound(true, "🎉 Bravo ! Mot trouvé !");
+            } else {
+                guessInput.value = '';
+                
+                // Feedback pour mauvaise réponse
+                const guessSection = document.getElementById('guessSection');
+                guessSection.style.background = '#ffe6e6';
+                setTimeout(() => {
+                    guessSection.style.background = '#e8f4f8';
+                }, 500);
+                
+                // Donner un autre indice si il en reste
+                if (gameState.turnsLeft > 0) {
+                    setTimeout(() => {
+                        giveBotClue();
+                    }, 1500);
+                } else {
+                    setTimeout(() => {
+                        endRound(false, "😅 Le mot était plus difficile que prévu !");
+                    }, 1000);
+                }
+            }
+        }
+        function startMatchmaking() {
+            cleanupOldData();
+            
+            // Vérifier s'il y a déjà quelqu'un en attente
+            const waitingPlayer = matchmakingQueue.find(entry => entry.player !== currentPlayer);
+            
+            if (waitingPlayer) {
+                // Match trouvé immédiatement !
+                const roomCode = generateRoomCode();
+                
+                rooms[roomCode] = {
+                    players: [currentPlayer, waitingPlayer.player],
+                    gameState: 'ready',
+                    createdAt: Date.now(),
+                    isMatchmaking: true
+                };
+                
+                // Retirer les deux joueurs de la queue
+                matchmakingQueue = matchmakingQueue.filter(entry => 
+                    entry.player !== currentPlayer && entry.player !== waitingPlayer.player
+                );
+                
+                currentRoom = roomCode;
+                saveData();
+                
+                // Démarrer la partie directement
+                setTimeout(() => {
+                    startGameSession();
+                }, 1500); // Petit délai pour l'effet
+                
+                showMatchFound(waitingPlayer.player);
+            } else {
+                // Ajouter le joueur à la queue
+                matchmakingQueue.push({
+                    player: currentPlayer,
+                    timestamp: Date.now()
+                });
+                saveData();
+                
+                showScreen('matchmakingScreen');
+                updateMatchmakingDisplay();
+                startMatchmakingProcess();
+            }
+        }
+
+        function showMatchFound(opponentName) {
+            document.getElementById('matchmakingScreen').innerHTML = `
+                <div class="room-info">
+                    <h2>🎉 Adversaire trouvé !</h2>
+                    <div style="font-size: 48px; margin: 20px 0;">✅</div>
+                    <p style="font-size: 18px; margin: 10px 0;"><strong>${opponentName}</strong></p>
+                    <div class="waiting-message">Préparation de la partie...</div>
+                </div>
+            `;
+        }
+
+        function startMatchmakingProcess() {
+            let elapsed = 0;
+            
+            matchmakingTimer = setInterval(() => {
+                elapsed += 1;
+                updateMatchmakingDisplay();
+                
+                // Simuler la recherche d'un adversaire après 8-15 secondes
+                if (elapsed >= 8 + Math.random() * 7) {
+                    foundMatch();
+                }
+            }, 1000);
+        }
+
+        function updateMatchmakingDisplay() {
+            const position = matchmakingQueue.findIndex(entry => entry.player === currentPlayer) + 1;
+            const onlineCount = simulateOnlineCount();
+            const estimatedTime = position * 15 + Math.floor(Math.random() * 20); // Temps estimé en secondes
+            
+            document.getElementById('queuePosition').textContent = `Position dans la file : ${position}`;
+            document.getElementById('onlineCount').textContent = `🟢 Joueurs en ligne : ${onlineCount}`;
+            
+            if (estimatedTime < 60) {
+                document.getElementById('estimatedTime').textContent = `Temps d'attente estimé : ~${estimatedTime}s`;
+            } else {
+                document.getElementById('estimatedTime').textContent = `Temps d'attente estimé : ~${Math.floor(estimatedTime/60)}min`;
+            }
+        }
+
+        function foundMatch() {
+            clearInterval(matchmakingTimer);
+            
+            // Générer un adversaire aléatoire
+            const opponentNames = [
+                'Emma_BTS', 'Lucas_MCO', 'Chloé_Marketing', 'Nathan_Commerce', 
+                'Léa_Distribution', 'Hugo_Vente', 'Camille_Merchandising', 'Arthur_Digital',
+                'Inès_Retail', 'Maxime_Business', 'Sarah_Commerce', 'Thomas_Marketing'
+            ];
+            const opponentName = opponentNames[Math.floor(Math.random() * opponentNames.length)];
+            
+            // Créer la salle de jeu
+            const roomCode = generateRoomCode();
+            currentRoom = roomCode;
+            
+            rooms[roomCode] = {
+                players: [currentPlayer, opponentName],
+                gameState: 'ready',
+                createdAt: Date.now(),
+                isMatchmaking: true
+            };
+            
+            // Retirer de la queue
+            matchmakingQueue = matchmakingQueue.filter(entry => entry.player !== currentPlayer);
+            saveData();
+            
+            showMatchFound(opponentName);
+            
+            // Démarrer le jeu après un court délai
+            setTimeout(() => {
+                startGameSession();
+            }, 2000);
+        }
+
+        function cancelMatchmaking() {
+            clearInterval(matchmakingTimer);
+            
+            // Retirer de la queue
+            matchmakingQueue = matchmakingQueue.filter(entry => entry.player !== currentPlayer);
+            saveData();
+            
+            backToLobby();
+        }
+        // Fonctions principales du jeu
+        function login() {
+            const playerName = document.getElementById('playerName').value.trim();
+            if (!playerName) {
+                alert('Veuillez entrer votre nom');
+                return;
+            }
+            
+            currentPlayer = playerName;
+            
+            if (!playerDatabase[playerName]) {
+                playerDatabase[playerName] = {
+                    totalScore: 0,
+                    gamesPlayed: 0,
+                    wordsGuessed: 0
+                };
+            }
+            
+            document.getElementById('currentPlayerName').textContent = playerName;
+            document.getElementById('playerTotalScore').textContent = playerDatabase[playerName].totalScore;
+            
+            saveData();
+            updateLeaderboard();
+            showScreen('lobbyScreen');
+        }
+
+        function createRoom() {
+            const roomCode = generateRoomCode();
+            currentRoom = roomCode;
+            
+            rooms[roomCode] = {
+                players: [currentPlayer],
+                gameState: 'waiting',
+                createdAt: Date.now()
+            };
+            
+            document.getElementById('displayRoomCode').textContent = roomCode;
+            saveData();
+            showScreen('waitingScreen');
+            
+            // Simuler l'arrivée d'un joueur après quelques secondes (pour test)
+            setTimeout(() => {
+                if (document.getElementById('waitingScreen').classList.contains('active')) {
+                    simulatePlayerJoin();
+                }
+            }, 5000);
+        }
+
+        function joinRoom() {
+            const roomCode = document.getElementById('roomCodeInput').value.trim().toUpperCase();
+            if (!roomCode) {
+                alert('Veuillez entrer un code de salle');
+                return;
+            }
+            
+            if (!rooms[roomCode]) {
+                alert('Code de salle invalide');
+                return;
+            }
+            
+            if (rooms[roomCode].players.length >= 2) {
+                alert('Cette salle est pleine');
+                return;
+            }
+            
+            currentRoom = roomCode;
+            rooms[roomCode].players.push(currentPlayer);
+            saveData();
+            
+            startGameSession();
+        }
+
+        function simulatePlayerJoin() {
+            const botNames = ['Emma', 'Lucas', 'Chloe', 'Nathan', 'Lea', 'Hugo', 'Camille', 'Arthur'];
+            const botName = botNames[Math.floor(Math.random() * botNames.length)];
+            
+            if (rooms[currentRoom]) {
+                rooms[currentRoom].players.push(botName);
+                saveData();
+                startGameSession();
+            }
+        }
+
+        function playOffline() {
+            // Mode test hors-ligne
+            const botNames = ['Emma', 'Lucas', 'Chloe', 'Nathan', 'Lea', 'Hugo'];
+            const botName = botNames[Math.floor(Math.random() * botNames.length)];
+            
+            gameState.player1.name = currentPlayer;
+            gameState.player2.name = botName;
+            gameState.player1.score = 0;
+            gameState.player2.score = 0;
+            
+            startGameSession();
+        }
+
+        function startGameSession() {
+            if (currentRoom && rooms[currentRoom]) {
+                const players = rooms[currentRoom].players;
+                gameState.player1.name = players[0];
+                gameState.player2.name = players[1];
+            }
+            
+            document.getElementById('player1Name').textContent = gameState.player1.name;
+            document.getElementById('player2Name').textContent = gameState.player2.name;
+            
+            startNewRound();
+            showScreen('gameScreen');
+        }
+
+        function startNewRound() {
+            const wordData = getRandomWord();
+            if (!wordData) {
+                alert('Aucun mot disponible dans la base de données !');
+                backToLobby();
+                return;
+            }
+            
+            gameState.currentWord = wordData;
+            gameState.clues = [];
+            gameState.turnsLeft = 4;
+            gameState.timeLeft = 60;
+            
+            // Alterner qui donne les indices
+            gameState.isMyTurn = gameState.currentGuesser === 1;
+            gameState.isGuesser = gameState.currentGuesser === 1 && gameState.player1.name === currentPlayer;
+            gameState.currentGuesser = gameState.currentGuesser === 1 ? 2 : 1;
+            
+            // Mise à jour de l'interface
+            updatePlayerTurnDisplay();
+            
+            document.getElementById('difficultyDisplay').innerHTML = 
+                `<span class="difficulty-${wordData.difficulty}">Difficulté : ${wordData.difficulty.toUpperCase()}</span>`;
+            
+            if (gameState.isGuesser || !gameState.isMyTurn) {
+                // Je suis le devineur ou ce n'est pas mon tour
+                document.getElementById('wordToGuess').textContent = `${wordData.word.length} lettres`;
+                document.getElementById('wordToGuess').classList.add('word-hidden');
+                document.getElementById('clueInputSection').style.display = 'none';
+                document.getElementById('guessSection').style.display = gameState.isGuesser ? 'block' : 'none';
+            } else {
+                // Je donne les indices
+                document.getElementById('wordToGuess').textContent = wordData.word;
+                document.getElementById('wordToGuess').classList.remove('word-hidden');
+                document.getElementById('clueInputSection').style.display = 'block';
+                document.getElementById('guessSection').style.display = 'none';
+            }
+            
+            updateGameDisplay();
+            startTimer();
+        }
+
+        function updatePlayerTurnDisplay() {
+            const player1Info = document.getElementById('player1Info');
+            const player2Info = document.getElementById('player2Info');
+            
+            // Retirer les classes précédentes
+            player1Info.classList.remove('current-turn');
+            player2Info.classList.remove('current-turn');
+            
+            // Ajouter la classe au joueur actuel
+            if (gameState.currentGuesser === 1) {
+                player2Info.classList.add('current-turn'); // Player2 donne les indices
+            } else {
+                player1Info.classList.add('current-turn'); // Player1 donne les indices
+            }
+        }
+
+        function updateGameDisplay() {
+            document.getElementById('turnsLeft').textContent = `Tours restants : ${gameState.turnsLeft}`;
+            document.getElementById('player1Score').textContent = gameState.player1.score;
+            document.getElementById('player2Score').textContent = gameState.player2.score;
+            
+            const cluesHTML = gameState.clues.map(clue => `<span class="clue">${clue}</span>`).join('');
+            document.getElementById('cluesList').innerHTML = cluesHTML;
+            
+            // Mise à jour du timer
+            const timerElement = document.getElementById('timer');
+            timerElement.textContent = gameState.timeLeft;
+            if (gameState.timeLeft <= 10) {
+                timerElement.classList.add('warning');
+            } else {
+                timerElement.classList.remove('warning');
+            }
+        }
+
+        function startTimer() {
+            gameState.startTime = Date.now();
+            gameState.timer = setInterval(() => {
+                gameState.timeLeft--;
+                updateGameDisplay();
+                
+                if (gameState.timeLeft <= 0) {
+                    clearInterval(gameState.timer);
+                    endRound(false, "⏰ Temps écoulé !");
+                }
+            }, 1000);
+        }
+
+        function validateClue(clue, targetWord) {
+            const cleanClue = clue.toLowerCase().trim();
+            const cleanTarget = targetWord.toLowerCase();
+            
+            // Vérifications de base
+            if (cleanClue.length < 2) return { valid: false, reason: "L'indice doit contenir au moins 2 caractères" };
+            if (cleanClue.includes(' ')) return { valid: false, reason: "Un seul mot autorisé" };
+            if (cleanClue === cleanTarget) return { valid: false, reason: "L'indice ne peut pas être le mot à deviner" };
+            
+            // Vérification similarité phonétique basique
+            if (cleanTarget.includes(cleanClue) || cleanClue.includes(cleanTarget.substring(0, 3))) {
+                return { valid: false, reason: "L'indice est trop proche du mot à deviner" };
+            }
+            
+            // Vérifier si l'indice a déjà été donné
+            if (gameState.clues.some(existingClue => existingClue.toLowerCase() === cleanClue)) {
+                return { valid: false, reason: "Cet indice a déjà été donné" };
+            }
+            
+            return { valid: true };
+        }
+
+        function giveClue() {
+            const clueInput = document.getElementById('clueInput');
+            const clue = clueInput.value.trim();
+            
+            if (!clue) {
+                alert('Veuillez entrer un indice');
+                return;
+            }
+            
+            const validation = validateClue(clue, gameState.currentWord.word);
+            if (!validation.valid) {
+                alert(validation.reason);
+                return;
+            }
+            
+            gameState.clues.push(clue);
+            gameState.turnsLeft--;
+            clueInput.value = '';
+            
+            updateGameDisplay();
+            
+            if (gameState.turnsLeft <= 0) {
+                endRound(false, "❌ Plus d'indices disponibles !");
+                return;
+            }
+            
+            // Passer au mode devinette
+            document.getElementById('clueInputSection').style.display = 'none';
+            document.getElementById('guessSection').style.display = 'block';
+            document.getElementById('wordToGuess').textContent = `${gameState.currentWord.word.length} lettres`;
+            document.getElementById('wordToGuess').classList.add('word-hidden');
+        }
+
+        function makeGuess() {
+            if (isTrainingMode) {
+                makeTrainingGuess();
+                return;
+            }
+            
+            const guessInput = document.getElementById('guessInput');
+            const guess = guessInput.value.trim().toLowerCase();
+            
+            if (!guess) {
+                alert('Veuillez entrer votre réponse');
+                return;
+            }
+            
+            if (guess === gameState.currentWord.word.toLowerCase()) {
+                endRound(true, "🎉 Mot trouvé !");
+            } else {
+                guessInput.value = '';
+                alert('❌ Mauvaise réponse, essayez encore !');
+                if (gameState.turnsLeft <= 0) {
+                    endRound(false, "❌ Plus d'indices disponibles !");
+                } else {
+                    skipTurn();
+                }
+            }
+        }
+
+        function skipTurn() {
+            if (gameState.turnsLeft <= 0) {
+                endRound(false, "❌ Plus d'indices disponibles !");
+                return;
+            }
+            
+            // Retourner au mode indice
+            document.getElementById('clueInputSection').style.display = 'block';
+            document.getElementById('guessSection').style.display = 'none';
+            document.getElementById('wordToGuess').textContent = gameState.currentWord.word;
+            document.getElementById('wordToGuess').classList.remove('word-hidden');
+            document.getElementById('guessInput').value = '';
+        }
+
+        function calculateScore(timeUsed, cluesUsed, difficulty) {
+            let baseScore = 100;
+            
+            // Bonus temps (plus c'est rapide, plus c'est bon)
+            const timeBonus = Math.max(0, 60 - timeUsed) * 2;
+            
+            // Bonus indices (moins d'indices = plus de points)
+            const clueBonus = (4 - cluesUsed) * 25;
+            
+            // Bonus difficulté
+            const difficultyMultiplier = { easy: 1, medium: 1.5, hard: 2 };
+            const difficultyBonus = Math.round(baseScore * (difficultyMultiplier[difficulty] - 1));
+            
+            return Math.round(baseScore + timeBonus + clueBonus + difficultyBonus);
+        }
+
+        function endRound(success, message) {
+            clearInterval(gameState.timer);
+            
+            const timeUsed = Math.round((Date.now() - gameState.startTime) / 1000);
+            let pointsEarned = 0;
+            
+            if (success) {
+                pointsEarned = calculateScore(timeUsed, gameState.clues.length, gameState.currentWord.difficulty);
+                gameState.player1.score += pointsEarned;
+                gameState.player2.score += pointsEarned;
+                
+                // Mettre à jour la base de données
+                if (playerDatabase[currentPlayer]) {
+                    playerDatabase[currentPlayer].totalScore += pointsEarned;
+                    playerDatabase[currentPlayer].wordsGuessed++;
+                }
+                saveData();
+            }
+            
+            // Afficher les résultats
+            document.getElementById('resultTitle').textContent = success ? "🎉 Mot trouvé !" : "❌ Échec";
+            document.getElementById('resultMessage').innerHTML = `
+                ${message}<br>
+                <strong>Le mot était : ${gameState.currentWord.word}</strong><br>
+                <em>${gameState.currentWord.definition}</em>
+            `;
+            document.getElementById('timeUsed').textContent = `${timeUsed}s`;
+            document.getElementById('cluesUsed').textContent = `${gameState.clues.length}/4`;
+            
+            const difficultyBonusValue = Math.round(100 * ({ easy: 0, medium: 0.5, hard: 1 }[gameState.currentWord.difficulty]));
+            document.getElementById('difficultyBonus').textContent = `+${difficultyBonusValue}`;
+            document.getElementById('pointsEarned').textContent = `${pointsEarned}`;
+            
+            showScreen('resultsScreen');
+        }
+
+        function nextRound() {
+            if (isTrainingMode) {
+                startTrainingRound();
+            } else {
+                startNewRound();
+            }
+            showScreen('gameScreen');
+        }
+
+        function backToLobby() {
+            if (currentPlayer && playerDatabase[currentPlayer]) {
+                playerDatabase[currentPlayer].gamesPlayed++;
+                saveData();
+                updateLeaderboard();
+                document.getElementById('playerTotalScore').textContent = playerDatabase[currentPlayer].totalScore;
+            }
+            
+            // Nettoyer la salle et la queue
+            if (currentRoom && rooms[currentRoom]) {
+                delete rooms[currentRoom];
+            }
+            matchmakingQueue = matchmakingQueue.filter(entry => entry.player !== currentPlayer);
+            clearInterval(matchmakingTimer);
+            currentRoom = null;
+            
+            showScreen('lobbyScreen');
+        }
+
+        function backToLogin() {
+            showScreen('loginScreen');
+        }
+
+        function endGame() {
+            if (confirm('Êtes-vous sûr de vouloir abandonner la partie ?')) {
+                clearInterval(gameState.timer);
+                clearInterval(matchmakingTimer);
+                backToLobby();
+            }
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            updateLeaderboard();
+            
+            // Gestion de la touche Entrée
+            document.getElementById('playerName').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') login();
+            });
+            
+            document.getElementById('roomCodeInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') joinRoom();
+            });
+            
+            document.getElementById('clueInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') giveClue();
+            });
+            
+            document.getElementById('guessInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') makeGuess();
+            });
+            
+            document.getElementById('newWord').addEventListener('input', function(e) {
+                e.target.value = e.target.value.toUpperCase();
+            });
+            
+            // Nettoyage périodique des anciennes salles et de la queue
+            setInterval(() => {
+                cleanupOldData();
+            }, 300000); // Toutes les 5 minutes
+        });
+    </script>
+</body>
+</html>
