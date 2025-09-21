@@ -1,17 +1,14 @@
-<div class="form-group">
-                        <label for="newClues">Indices (un par ligne) :</label>
-                        <textarea id="newClues" placeholder="Logo&#10;Nike&#10;Enseigne&#10;Identité" rows="4"></textarea>
-                        <small style="color: #666;">Donnez 4 indices du plus facile au plus difficile</small>
-                    </div>        <!-- Écran d'attente salle privée -->
-        <div class="screen" id="waitingScreen">
-            <div class="room-info">
-                <h2>Salle créée !</h2>
-                <div class="room-code" id="displayRoomCode">ABCD1234</div>
-                <p>Partagez ce code avec votre partenaire</p>
-                <div class="waiting-message">En attente du second joueur...</div>
-                <button class="btn btn-secondary btn-small" onclick="backToLobby()">Retour</button>
-            </div>
-        </div><!DOCTYPE html>
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LexiMarket - Jeu de Vocabulaire Marketing BTS MCO</title>
+    <!-- Copiez exactement tout le contenu de l'artifact précédent ici -->
+</head>
+<body>
+    <!<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -38,7 +35,7 @@
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
             padding: 30px;
-            max-width: 800px;
+            max-width: 900px;
             width: 90%;
             min-height: 600px;
         }
@@ -52,6 +49,7 @@
         .header h1 {
             color: #333;
             margin-bottom: 10px;
+            font-size: 2.5em;
         }
 
         .header p {
@@ -155,6 +153,59 @@
 
         .btn-secondary {
             background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+            color: #212529;
+        }
+
+        .game-modes {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .game-mode {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .game-mode:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .game-mode h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .game-mode p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .queue-status {
+            background: #e8f4f8;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .queue-timer {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+            margin: 10px 0;
         }
 
         .room-info {
@@ -269,6 +320,10 @@
             font-size: 14px;
         }
 
+        .bot-clue {
+            background: #28a745;
+        }
+
         .turns-left {
             font-size: 18px;
             color: #e74c3c;
@@ -307,7 +362,7 @@
         }
 
         .word-list {
-            max-height: 300px;
+            max-height: 400px;
             overflow-y: auto;
             border: 2px solid #e1e5e9;
             border-radius: 8px;
@@ -316,35 +371,57 @@
         }
 
         .word-item {
+            background: #f8f9fa;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid #e1e5e9;
+        }
+
+        .word-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-            background: #f8f9fa;
-            margin-bottom: 8px;
-            border-radius: 6px;
-        }
-
-        .word-item:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-        }
-
-        .word-details {
-            flex: 1;
-            text-align: left;
+            margin-bottom: 10px;
         }
 
         .word-text {
             font-weight: bold;
             color: #333;
-            margin-bottom: 4px;
+            font-size: 18px;
         }
 
         .word-definition {
-            font-size: 14px;
             color: #666;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+
+        .word-clues {
+            background: white;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+
+        .word-clues h5 {
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .clue-input-row {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 5px;
+        }
+
+        .clue-input-small {
+            flex: 1;
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
         }
 
         .word-difficulty {
@@ -378,10 +455,43 @@
         .leaderboard-item {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             padding: 10px;
             background: white;
             border-radius: 8px;
             margin-bottom: 8px;
+        }
+
+        .user-stats {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .stat-item {
+            text-align: center;
+            background: white;
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
         }
 
         @media (max-width: 600px) {
@@ -394,7 +504,7 @@
                 gap: 15px;
             }
             
-            .score-breakdown {
+            .score-breakdown, .game-modes {
                 grid-template-columns: 1fr;
             }
 
@@ -416,11 +526,25 @@
         <!-- Écran de connexion -->
         <div class="screen active" id="loginScreen">
             <div class="login-form">
+                <h2 style="text-align: center; margin-bottom: 20px;">Connexion</h2>
+                
                 <div class="form-group">
-                    <label for="playerName">Nom de l'étudiant :</label>
-                    <input type="text" id="playerName" placeholder="Votre nom">
+                    <label for="userName">Pseudo :</label>
+                    <input type="text" id="userName" placeholder="Votre pseudo">
                 </div>
+                
+                <div class="form-group">
+                    <label for="userPassword">Mot de passe :</label>
+                    <input type="password" id="userPassword" placeholder="Votre mot de passe">
+                </div>
+                
+                <div class="form-group">
+                    <label for="userEmail">Email (optionnel) :</label>
+                    <input type="email" id="userEmail" placeholder="votre@email.com">
+                </div>
+                
                 <button class="btn" onclick="login()">Se connecter</button>
+                <button class="btn btn-secondary" onclick="register()">Créer un compte</button>
                 
                 <div class="leaderboard" id="loginLeaderboard">
                     <h3>🏆 Classement</h3>
@@ -433,30 +557,77 @@
         <div class="screen" id="lobbyScreen">
             <div class="lobby-form">
                 <h2>Bienvenue, <span id="currentPlayerName"></span>!</h2>
-                <p style="margin: 20px 0;">Score total : <span id="playerTotalScore">0</span> points</p>
                 
-                <div class="form-group">
-                    <label for="roomCodeInput">Code de salle (pour rejoindre) :</label>
-                    <input type="text" id="roomCodeInput" placeholder="Ex: ABCD1234">
+                <div class="user-stats">
+                    <h4>📊 Vos statistiques</h4>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-value" id="userTotalScore">0</div>
+                            <div class="stat-label">Points</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="userGamesPlayed">0</div>
+                            <div class="stat-label">Parties</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="userWordsGuessed">0</div>
+                            <div class="stat-label">Mots trouvés</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="userWinRate">0%</div>
+                            <div class="stat-label">Taux réussite</div>
+                        </div>
+                    </div>
                 </div>
                 
-                <button class="btn" onclick="startTrainingMode()">🎯 Mode Entraînement</button>
-                <button class="btn btn-secondary" onclick="startMatchmaking()">🔍 Rechercher un adversaire</button>
-                <button class="btn btn-secondary" onclick="createRoom()">Créer une salle privée</button>
-                <button class="btn btn-secondary" onclick="joinRoom()">Rejoindre une salle</button>
+                <div class="game-modes">
+                    <div class="game-mode" onclick="startTraining()">
+                        <h3>🤖 Entraînement</h3>
+                        <p>Jouez contre l'IA pour vous entraîner</p>
+                        <button class="btn btn-warning btn-small">Commencer</button>
+                    </div>
+                    
+                    <div class="game-mode" onclick="startMatchmaking()">
+                        <h3>⚡ Matchmaking</h3>
+                        <p>Trouvez un adversaire automatiquement</p>
+                        <button class="btn btn-success btn-small">Chercher</button>
+                    </div>
+                </div>
+                
+                <div style="text-align: center;">
+                    <h3>🏠 Salles privées</h3>
+                    <div class="form-group">
+                        <input type="text" id="roomCodeInput" placeholder="Code de salle (pour rejoindre)" style="max-width: 200px; margin: 0 auto;">
+                    </div>
+                    <button class="btn btn-secondary" onclick="createRoom()">Créer une salle</button>
+                    <button class="btn btn-secondary" onclick="joinRoom()">Rejoindre</button>
+                </div>
+                
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="btn btn-small btn-secondary" onclick="logout()">Déconnexion</button>
+                </div>
             </div>
         </div>
 
         <!-- Écran de matchmaking -->
         <div class="screen" id="matchmakingScreen">
+            <div class="queue-status">
+                <h2>🔍 Recherche d'adversaire...</h2>
+                <div class="queue-timer" id="queueTimer">0:00</div>
+                <p>Joueurs en file d'attente : <span id="queueCount">1</span></p>
+                <div class="waiting-message">Veuillez patienter...</div>
+                <button class="btn btn-danger btn-small" onclick="cancelMatchmaking()">Annuler</button>
+            </div>
+        </div>
+
+        <!-- Écran d'attente de salle -->
+        <div class="screen" id="waitingScreen">
             <div class="room-info">
-                <h2>🎯 Recherche d'adversaire</h2>
-                <div style="font-size: 64px; margin: 20px 0;">⏳</div>
-                <div class="waiting-message">Recherche d'un autre joueur...</div>
-                <div id="queuePosition" style="margin: 15px 0; font-weight: bold; color: #667eea;">Position dans la file : 1</div>
-                <div id="estimatedTime" style="margin: 10px 0; color: #666; font-size: 14px;">Temps d'attente estimé : ~30s</div>
-                <div id="onlineCount" style="margin: 10px 0; color: #28a745; font-size: 14px;">🟢 Joueurs en ligne : 5</div>
-                <button class="btn btn-secondary btn-small" onclick="cancelMatchmaking()">Annuler la recherche</button>
+                <h2>Salle créée !</h2>
+                <div class="room-code" id="displayRoomCode">ABCD1234</div>
+                <p>Partagez ce code avec votre partenaire</p>
+                <div class="waiting-message">En attente du second joueur...</div>
+                <button class="btn btn-secondary btn-small" onclick="backToLobby()">Retour</button>
             </div>
         </div>
 
@@ -548,7 +719,7 @@
                         <input type="text" id="newWord" placeholder="Ex: SEGMENTATION" style="text-transform: uppercase;">
                     </div>
                     <div class="form-group">
-                        <label for="newDefinition">Définition/Indice :</label>
+                        <label for="newDefinition">Définition :</label>
                         <textarea id="newDefinition" placeholder="Ex: Division du marché en groupes homogènes"></textarea>
                     </div>
                     <div class="form-group">
@@ -558,6 +729,15 @@
                             <option value="medium">Moyen</option>
                             <option value="hard">Difficile</option>
                         </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Indices pour le bot (4 indices) :</label>
+                        <div class="clue-input-row">
+                            <input type="text" id="newClue1" placeholder="Indice 1" class="clue-input-small">
+                            <input type="text" id="newClue2" placeholder="Indice 2" class="clue-input-small">
+                            <input type="text" id="newClue3" placeholder="Indice 3" class="clue-input-small">
+                            <input type="text" id="newClue4" placeholder="Indice 4" class="clue-input-small">
+                        </div>
                     </div>
                     <button class="btn btn-success" onclick="addWord()">Ajouter le mot</button>
                 </div>
@@ -584,95 +764,94 @@
     </div>
 
     <script>
-        // Base de données de vocabulaire marketing (initiale)
+        // Base de données de vocabulaire marketing avec indices pour le bot
         let marketingVocabulary = JSON.parse(localStorage.getItem('leximarketWords') || JSON.stringify({
             easy: [
                 { 
                     word: "MARQUE", 
                     definition: "Nom commercial d'un produit ou service",
-                    clues: ["Logo", "Nike", "Enseigne", "Identité"]
+                    botClues: ["logo", "nom", "entreprise", "identité"]
                 },
                 { 
                     word: "PRIX", 
                     definition: "Valeur monétaire demandée pour un bien",
-                    clues: ["Euros", "Coût", "Tarif", "Montant"]
+                    botClues: ["coût", "euros", "argent", "tarif"]
                 },
                 { 
                     word: "CLIENT", 
                     definition: "Personne qui achète un produit ou service",
-                    clues: ["Acheteur", "Consommateur", "Personne", "Magasin"]
+                    botClues: ["acheteur", "consommateur", "personne", "magasin"]
                 },
                 { 
                     word: "VENTE", 
                     definition: "Action de céder un bien contre paiement",
-                    clues: ["Commerce", "Échanger", "Argent", "Transaction"]
+                    botClues: ["commerce", "transaction", "échanger", "vendeur"]
                 },
                 { 
                     word: "PRODUIT", 
                     definition: "Bien ou service proposé sur le marché",
-                    clues: ["Article", "Marchandise", "Objet", "Service"]
+                    botClues: ["objet", "marchandise", "bien", "article"]
                 }
             ],
             medium: [
                 { 
                     word: "SEGMENTATION", 
                     definition: "Division du marché en groupes homogènes",
-                    clues: ["Diviser", "Groupes", "Cibler", "Catégories"]
+                    botClues: ["diviser", "groupes", "cibler", "catégories"]
                 },
                 { 
                     word: "POSITIONNEMENT", 
                     definition: "Place du produit dans l'esprit du consommateur",
-                    clues: ["Image", "Perception", "Esprit", "Concurrence"]
+                    botClues: ["image", "perception", "concurrence", "différenciation"]
                 },
                 { 
                     word: "MERCHANDISING", 
                     definition: "Techniques de présentation des produits en magasin",
-                    clues: ["Vitrine", "Présentation", "Rayon", "Exposition"]
+                    botClues: ["vitrine", "disposition", "présentation", "rayon"]
                 },
                 { 
                     word: "FIDELISATION", 
                     definition: "Stratégies pour fidéliser la clientèle",
-                    clues: ["Fidélité", "Retenir", "Carte", "Récompense"]
+                    botClues: ["garder", "clients", "fidèles", "programme"]
                 },
                 { 
                     word: "FRANCHISE", 
                     definition: "Contrat de distribution sous une enseigne",
-                    clues: ["McDonald", "Contrat", "Enseigne", "Réseau"]
+                    botClues: ["réseau", "enseigne", "contrat", "licence"]
                 }
             ],
             hard: [
                 { 
                     word: "OMNICANALITE", 
                     definition: "Stratégie multicanale intégrée et cohérente",
-                    clues: ["Canaux", "Internet", "Magasin", "Cohérence"]
+                    botClues: ["canaux", "intégration", "cohérence", "multicanal"]
                 },
                 { 
                     word: "NEUROMARKETING", 
                     definition: "Application des neurosciences au marketing",
-                    clues: ["Cerveau", "Science", "Émotions", "Psychologie"]
+                    botClues: ["cerveau", "neurones", "psychologie", "comportement"]
                 },
                 { 
                     word: "RETARGETING", 
                     definition: "Reciblage publicitaire des visiteurs web",
-                    clues: ["Publicité", "Internet", "Cookies", "Recibler"]
+                    botClues: ["publicité", "internet", "recibler", "visiteurs"]
                 },
                 { 
                     word: "CROSSELLING", 
                     definition: "Vente de produits complémentaires",
-                    clues: ["Complémentaire", "Addition", "Suggestion", "Plus"]
+                    botClues: ["complémentaire", "supplémentaire", "addition", "combinaison"]
                 },
                 { 
                     word: "STORYTELLING", 
                     definition: "Technique narrative en communication marketing",
-                    clues: ["Histoire", "Raconter", "Émotion", "Récit"]
+                    botClues: ["histoire", "récit", "narration", "émotions"]
                 }
             ]
         }));
 
         // Variables du jeu
-        let currentPlayer = null;
+        let currentUser = null;
         let currentRoom = null;
-        let matchmakingTimer = null;
         let isTrainingMode = false;
         let gameState = {
             player1: { name: "", score: 0 },
@@ -689,44 +868,25 @@
             isMyTurn: true
         };
 
-        // Système de stockage
-        let playerDatabase = JSON.parse(localStorage.getItem('leximarketDB') || '{}');
+        // Système de stockage avancé
+        let userDatabase = JSON.parse(localStorage.getItem('leximarketUsers') || '{}');
         let rooms = JSON.parse(localStorage.getItem('leximarketRooms') || '{}');
         let matchmakingQueue = JSON.parse(localStorage.getItem('leximarketQueue') || '[]');
+        let gameHistory = JSON.parse(localStorage.getItem('leximarketHistory') || '[]');
+        let queueTimer = null;
+        let queueStartTime = null;
 
         // Fonctions utilitaires
         function saveData() {
-            localStorage.setItem('leximarketDB', JSON.stringify(playerDatabase));
+            localStorage.setItem('leximarketUsers', JSON.stringify(userDatabase));
             localStorage.setItem('leximarketWords', JSON.stringify(marketingVocabulary));
             localStorage.setItem('leximarketRooms', JSON.stringify(rooms));
             localStorage.setItem('leximarketQueue', JSON.stringify(matchmakingQueue));
+            localStorage.setItem('leximarketHistory', JSON.stringify(gameHistory));
         }
 
         function generateRoomCode() {
             return Math.random().toString(36).substr(2, 8).toUpperCase();
-        }
-
-        function simulateOnlineCount() {
-            // Simulation du nombre de joueurs en ligne (entre 3 et 12)
-            return Math.floor(Math.random() * 10) + 3;
-        }
-
-        function cleanupOldData() {
-            const now = Date.now();
-            
-            // Nettoyer les anciennes salles (plus de 1 heure)
-            Object.keys(rooms).forEach(roomCode => {
-                if (now - rooms[roomCode].createdAt > 3600000) {
-                    delete rooms[roomCode];
-                }
-            });
-            
-            // Nettoyer les anciennes entrées de la queue (plus de 5 minutes)
-            matchmakingQueue = matchmakingQueue.filter(entry => 
-                now - entry.timestamp < 300000
-            );
-            
-            saveData();
         }
 
         function getRandomWord() {
@@ -734,7 +894,6 @@
             const difficulty = difficulties[Math.floor(Math.random() * difficulties.length)];
             const words = marketingVocabulary[difficulty];
             if (words.length === 0) {
-                // Fallback si aucun mot dans cette difficulté
                 const allWords = [...marketingVocabulary.easy, ...marketingVocabulary.medium, ...marketingVocabulary.hard];
                 if (allWords.length === 0) return null;
                 const randomWord = allWords[Math.floor(Math.random() * allWords.length)];
@@ -745,18 +904,31 @@
         }
 
         function updateLeaderboard() {
-            const leaderboard = Object.entries(playerDatabase)
+            const leaderboard = Object.entries(userDatabase)
                 .sort((a, b) => b[1].totalScore - a[1].totalScore)
                 .slice(0, 5);
             
-            const leaderboardHTML = leaderboard.map((player, index) => 
+            const leaderboardHTML = leaderboard.map((user, index) => 
                 `<div class="leaderboard-item">
-                    <span>${index + 1}. ${player[0]}</span>
-                    <span>${player[1].totalScore} pts</span>
+                    <span>${index + 1}. ${user[0]}</span>
+                    <span>${user[1].totalScore} pts</span>
                 </div>`
             ).join('');
             
             document.getElementById('leaderboardList').innerHTML = leaderboardHTML || '<div class="leaderboard-item"><span>Aucun score encore</span></div>';
+        }
+
+        function updateUserStats() {
+            if (!currentUser || !userDatabase[currentUser]) return;
+            
+            const userData = userDatabase[currentUser];
+            document.getElementById('userTotalScore').textContent = userData.totalScore;
+            document.getElementById('userGamesPlayed').textContent = userData.gamesPlayed;
+            document.getElementById('userWordsGuessed').textContent = userData.wordsGuessed;
+            
+            const winRate = userData.gamesPlayed > 0 ? 
+                Math.round((userData.wordsGuessed / userData.gamesPlayed) * 100) : 0;
+            document.getElementById('userWinRate').textContent = winRate + '%';
         }
 
         function showScreen(screenId) {
@@ -764,6 +936,187 @@
                 screen.classList.remove('active');
             });
             document.getElementById(screenId).classList.add('active');
+        }
+
+        // Fonctions d'authentification
+        function login() {
+            const userName = document.getElementById('userName').value.trim();
+            const password = document.getElementById('userPassword').value.trim();
+            const email = document.getElementById('userEmail').value.trim();
+            
+            if (!userName || !password) {
+                alert('Veuillez remplir le pseudo et le mot de passe');
+                return;
+            }
+            
+            if (userDatabase[userName]) {
+                // Utilisateur existant
+                if (userDatabase[userName].password !== password) {
+                    alert('Mot de passe incorrect');
+                    return;
+                }
+            } else {
+                alert('Utilisateur non trouvé. Créez un compte d\'abord.');
+                return;
+            }
+            
+            currentUser = userName;
+            document.getElementById('currentPlayerName').textContent = userName;
+            
+            updateUserStats();
+            updateLeaderboard();
+            showScreen('lobbyScreen');
+        }
+
+        function register() {
+            const userName = document.getElementById('userName').value.trim();
+            const password = document.getElementById('userPassword').value.trim();
+            const email = document.getElementById('userEmail').value.trim();
+            
+            if (!userName || !password) {
+                alert('Veuillez remplir le pseudo et le mot de passe');
+                return;
+            }
+            
+            if (userDatabase[userName]) {
+                alert('Ce pseudo existe déjà');
+                return;
+            }
+            
+            // Créer le nouveau compte
+            userDatabase[userName] = {
+                password: password,
+                email: email,
+                totalScore: 0,
+                gamesPlayed: 0,
+                wordsGuessed: 0,
+                createdAt: Date.now(),
+                lastLogin: Date.now()
+            };
+            
+            saveData();
+            currentUser = userName;
+            document.getElementById('currentPlayerName').textContent = userName;
+            
+            updateUserStats();
+            updateLeaderboard();
+            showScreen('lobbyScreen');
+            alert('Compte créé avec succès !');
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('userName').value = '';
+            document.getElementById('userPassword').value = '';
+            document.getElementById('userEmail').value = '';
+            showScreen('loginScreen');
+        }
+
+        // Fonctions de matchmaking
+        function startMatchmaking() {
+            // Ajouter l'utilisateur à la queue
+            if (!matchmakingQueue.includes(currentUser)) {
+                matchmakingQueue.push(currentUser);
+                saveData();
+            }
+            
+            queueStartTime = Date.now();
+            updateQueueDisplay();
+            showScreen('matchmakingScreen');
+            
+            // Démarrer le timer de la queue
+            queueTimer = setInterval(() => {
+                updateQueueDisplay();
+                
+                // Simuler la recherche d'un adversaire
+                if (Math.random() < 0.3 && (Date.now() - queueStartTime) > 3000) {
+                    findMatch();
+                }
+            }, 1000);
+        }
+
+        function updateQueueDisplay() {
+            const elapsed = Math.floor((Date.now() - queueStartTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            document.getElementById('queueTimer').textContent = 
+                `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            
+            document.getElementById('queueCount').textContent = matchmakingQueue.length;
+        }
+
+        function findMatch() {
+            clearInterval(queueTimer);
+            
+            // Retirer l'utilisateur de la queue
+            matchmakingQueue = matchmakingQueue.filter(user => user !== currentUser);
+            saveData();
+            
+            // Simuler un adversaire trouvé
+            const opponents = ['Alice', 'Bob', 'Charlie', 'Diana', 'Eve', 'Frank'];
+            const opponent = opponents[Math.floor(Math.random() * opponents.length)];
+            
+            gameState.player1.name = currentUser;
+            gameState.player2.name = opponent;
+            gameState.player1.score = 0;
+            gameState.player2.score = 0;
+            
+            alert(`Adversaire trouvé : ${opponent} !`);
+            startGameSession();
+        }
+
+        function cancelMatchmaking() {
+            clearInterval(queueTimer);
+            matchmakingQueue = matchmakingQueue.filter(user => user !== currentUser);
+            saveData();
+            showScreen('lobbyScreen');
+        }
+
+        // Fonctions d'entraînement
+        function startTraining() {
+            isTrainingMode = true;
+            gameState.player1.name = currentUser;
+            gameState.player2.name = '🤖 Bot LexiMarket';
+            gameState.player1.score = 0;
+            gameState.player2.score = 0;
+            
+            startGameSession();
+        }
+
+        function giveBotClue() {
+            if (!isTrainingMode || !gameState.currentWord || !gameState.currentWord.botClues) return;
+            
+            const availableClues = gameState.currentWord.botClues.filter(clue => 
+                !gameState.clues.includes(clue)
+            );
+            
+            if (availableClues.length === 0) return;
+            
+            const randomClue = availableClues[Math.floor(Math.random() * availableClues.length)];
+            
+            setTimeout(() => {
+                gameState.clues.push(randomClue);
+                gameState.turnsLeft--;
+                updateGameDisplay();
+                
+                // Ajouter visuellement l'indice du bot
+                const cluesList = document.getElementById('cluesList');
+                const lastClue = cluesList.lastElementChild;
+                if (lastClue) {
+                    lastClue.classList.add('bot-clue');
+                }
+                
+                if (gameState.turnsLeft <= 0) {
+                    endRound(false, "❌ Plus d'indices disponibles !");
+                    return;
+                }
+                
+                // Passer au mode devinette pour l'utilisateur
+                document.getElementById('clueInputSection').style.display = 'none';
+                document.getElementById('guessSection').style.display = 'block';
+                document.getElementById('wordToGuess').textContent = `${gameState.currentWord.word.length} lettres`;
+                document.getElementById('wordToGuess').classList.add('word-hidden');
+            }, 1500 + Math.random() * 2000); // Délai réaliste pour le bot
         }
 
         // Fonctions d'administration
@@ -776,30 +1129,17 @@
             const word = document.getElementById('newWord').value.trim().toUpperCase();
             const definition = document.getElementById('newDefinition').value.trim();
             const difficulty = document.getElementById('newDifficulty').value;
-            const cluesText = document.getElementById('newClues').value.trim();
+            
+            const botClues = [
+                document.getElementById('newClue1').value.trim(),
+                document.getElementById('newClue2').value.trim(),
+                document.getElementById('newClue3').value.trim(),
+                document.getElementById('newClue4').value.trim()
+            ].filter(clue => clue.length > 0);
 
             if (!word || !definition) {
                 alert('Veuillez remplir au moins le mot et la définition');
                 return;
-            }
-
-            // Traitement des indices
-            let clues = [];
-            if (cluesText) {
-                clues = cluesText.split('\n')
-                    .map(clue => clue.trim())
-                    .filter(clue => clue.length > 0)
-                    .slice(0, 4); // Maximum 4 indices
-            }
-            
-            // Indices par défaut si aucun fourni
-            if (clues.length === 0) {
-                clues = ["Indice1", "Indice2", "Indice3", "Indice4"];
-            }
-            
-            // Compléter jusqu'à 4 indices si nécessaire
-            while (clues.length < 4) {
-                clues.push(`Indice${clues.length + 1}`);
             }
 
             // Vérifier si le mot existe déjà
@@ -809,14 +1149,21 @@
                 return;
             }
 
-            marketingVocabulary[difficulty].push({ word, definition, clues });
+            marketingVocabulary[difficulty].push({ 
+                word, 
+                definition, 
+                botClues: botClues.length > 0 ? botClues : [word.toLowerCase().substring(0, 3), "mystère", "devinez", "concept"]
+            });
             saveData();
 
             // Réinitialiser le formulaire
             document.getElementById('newWord').value = '';
             document.getElementById('newDefinition').value = '';
-            document.getElementById('newClues').value = '';
             document.getElementById('newDifficulty').value = 'easy';
+            document.getElementById('newClue1').value = '';
+            document.getElementById('newClue2').value = '';
+            document.getElementById('newClue3').value = '';
+            document.getElementById('newClue4').value = '';
 
             updateWordList();
             alert('Mot ajouté avec succès !');
@@ -840,17 +1187,21 @@
                 totalWords += words.length;
                 
                 words.forEach((wordObj, index) => {
-                    const cluesPreview = wordObj.clues ? wordObj.clues.slice(0, 2).join(', ') + '...' : 'Pas d\'indices';
                     html += `
                         <div class="word-item">
-                            <div class="word-details">
+                            <div class="word-header">
                                 <div class="word-text">${wordObj.word}</div>
-                                <div class="word-definition">${wordObj.definition}</div>
-                                <div style="font-size: 12px; color: #999; margin-top: 4px;">Indices: ${cluesPreview}</div>
+                                <div>
+                                    <span class="word-difficulty difficulty-${difficulty}">${difficulty.toUpperCase()}</span>
+                                    <button class="btn btn-small btn-danger" onclick="deleteWord('${difficulty}', ${index})">🗑️</button>
+                                </div>
                             </div>
-                            <div>
-                                <span class="word-difficulty difficulty-${difficulty}">${difficulty.toUpperCase()}</span>
-                                <button class="btn btn-small btn-danger" onclick="deleteWord('${difficulty}', ${index})">🗑️</button>
+                            <div class="word-definition">${wordObj.definition}</div>
+                            <div class="word-clues">
+                                <h5>Indices du bot :</h5>
+                                <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+                                    ${(wordObj.botClues || []).map(clue => `<span class="clue">${clue}</span>`).join('')}
+                                </div>
                             </div>
                         </div>
                     `;
@@ -888,7 +1239,6 @@
                 try {
                     const importedWords = JSON.parse(e.target.result);
                     
-                    // Validation de base
                     if (!importedWords.easy || !importedWords.medium || !importedWords.hard) {
                         throw new Error('Format invalide');
                     }
@@ -906,282 +1256,13 @@
             reader.readAsText(file);
         }
 
-        // Fonctions de mode entraînement
-        function startTrainingMode() {
-            isTrainingMode = true;
-            gameState.player1.name = currentPlayer;
-            gameState.player2.name = "🤖 Prof Bot";
-            gameState.player1.score = 0;
-            gameState.player2.score = 0;
-            
-            document.getElementById('player1Name').textContent = gameState.player1.name;
-            document.getElementById('player2Name').textContent = gameState.player2.name;
-            
-            startTrainingRound();
-            showScreen('gameScreen');
-        }
-
-        function startTrainingRound() {
-            const wordData = getRandomWord();
-            if (!wordData) {
-                alert('Aucun mot disponible dans la base de données !');
-                backToLobby();
-                return;
-            }
-            
-            gameState.currentWord = wordData;
-            gameState.clues = [];
-            gameState.turnsLeft = 4;
-            gameState.timeLeft = 90; // Plus de temps en mode entraînement
-            gameState.isGuesser = true; // L'étudiant devine toujours
-            
-            // Interface pour le mode entraînement
-            document.getElementById('difficultyDisplay').innerHTML = 
-                `<span class="difficulty-${wordData.difficulty}">🎯 Entraînement - ${wordData.difficulty.toUpperCase()}</span>`;
-            
-            document.getElementById('wordToGuess').textContent = `${wordData.word.length} lettres`;
-            document.getElementById('wordToGuess').classList.add('word-hidden');
-            
-            // Masquer l'interface de donnation d'indices
-            document.getElementById('clueInputSection').style.display = 'none';
-            document.getElementById('guessSection').style.display = 'block';
-            
-            // Mettre en évidence que c'est le tour de l'étudiant
-            document.getElementById('player1Info').classList.add('current-turn');
-            document.getElementById('player2Info').classList.remove('current-turn');
-            
-            updateGameDisplay();
-            startTimer();
-            
-            // Le bot commence à donner des indices
-            setTimeout(() => {
-                giveBotClue();
-            }, 2000);
-        }
-
-        function giveBotClue() {
-            if (gameState.turnsLeft <= 0 || !gameState.currentWord) return;
-            
-            // Prendre le prochain indice prédéfini
-            const availableClues = gameState.currentWord.clues || ["Mot", "Marketing", "Commerce", "Difficile"];
-            const clueIndex = 4 - gameState.turnsLeft;
-            const clue = availableClues[clueIndex] || availableClues[Math.floor(Math.random() * availableClues.length)];
-            
-            gameState.clues.push(clue);
-            gameState.turnsLeft--;
-            
-            updateGameDisplay();
-            
-            // Animation d'ajout d'indice
-            const cluesList = document.getElementById('cluesList');
-            const lastClue = cluesList.lastElementChild;
-            if (lastClue) {
-                lastClue.style.animation = 'none';
-                setTimeout(() => {
-                    lastClue.style.animation = 'pulse 0.5s';
-                }, 10);
-            }
-            
-            if (gameState.turnsLeft <= 0) {
-                setTimeout(() => {
-                    endRound(false, "🤖 Tous les indices ont été donnés !");
-                }, 1000);
-            }
-        }
-
-        function makeTrainingGuess() {
-            const guessInput = document.getElementById('guessInput');
-            const guess = guessInput.value.trim().toLowerCase();
-            
-            if (!guess) {
-                alert('Veuillez entrer votre réponse');
-                return;
-            }
-            
-            if (guess === gameState.currentWord.word.toLowerCase()) {
-                endRound(true, "🎉 Bravo ! Mot trouvé !");
-            } else {
-                guessInput.value = '';
-                
-                // Feedback pour mauvaise réponse
-                const guessSection = document.getElementById('guessSection');
-                guessSection.style.background = '#ffe6e6';
-                setTimeout(() => {
-                    guessSection.style.background = '#e8f4f8';
-                }, 500);
-                
-                // Donner un autre indice si il en reste
-                if (gameState.turnsLeft > 0) {
-                    setTimeout(() => {
-                        giveBotClue();
-                    }, 1500);
-                } else {
-                    setTimeout(() => {
-                        endRound(false, "😅 Le mot était plus difficile que prévu !");
-                    }, 1000);
-                }
-            }
-        }
-        function startMatchmaking() {
-            cleanupOldData();
-            
-            // Vérifier s'il y a déjà quelqu'un en attente
-            const waitingPlayer = matchmakingQueue.find(entry => entry.player !== currentPlayer);
-            
-            if (waitingPlayer) {
-                // Match trouvé immédiatement !
-                const roomCode = generateRoomCode();
-                
-                rooms[roomCode] = {
-                    players: [currentPlayer, waitingPlayer.player],
-                    gameState: 'ready',
-                    createdAt: Date.now(),
-                    isMatchmaking: true
-                };
-                
-                // Retirer les deux joueurs de la queue
-                matchmakingQueue = matchmakingQueue.filter(entry => 
-                    entry.player !== currentPlayer && entry.player !== waitingPlayer.player
-                );
-                
-                currentRoom = roomCode;
-                saveData();
-                
-                // Démarrer la partie directement
-                setTimeout(() => {
-                    startGameSession();
-                }, 1500); // Petit délai pour l'effet
-                
-                showMatchFound(waitingPlayer.player);
-            } else {
-                // Ajouter le joueur à la queue
-                matchmakingQueue.push({
-                    player: currentPlayer,
-                    timestamp: Date.now()
-                });
-                saveData();
-                
-                showScreen('matchmakingScreen');
-                updateMatchmakingDisplay();
-                startMatchmakingProcess();
-            }
-        }
-
-        function showMatchFound(opponentName) {
-            document.getElementById('matchmakingScreen').innerHTML = `
-                <div class="room-info">
-                    <h2>🎉 Adversaire trouvé !</h2>
-                    <div style="font-size: 48px; margin: 20px 0;">✅</div>
-                    <p style="font-size: 18px; margin: 10px 0;"><strong>${opponentName}</strong></p>
-                    <div class="waiting-message">Préparation de la partie...</div>
-                </div>
-            `;
-        }
-
-        function startMatchmakingProcess() {
-            let elapsed = 0;
-            
-            matchmakingTimer = setInterval(() => {
-                elapsed += 1;
-                updateMatchmakingDisplay();
-                
-                // Simuler la recherche d'un adversaire après 8-15 secondes
-                if (elapsed >= 8 + Math.random() * 7) {
-                    foundMatch();
-                }
-            }, 1000);
-        }
-
-        function updateMatchmakingDisplay() {
-            const position = matchmakingQueue.findIndex(entry => entry.player === currentPlayer) + 1;
-            const onlineCount = simulateOnlineCount();
-            const estimatedTime = position * 15 + Math.floor(Math.random() * 20); // Temps estimé en secondes
-            
-            document.getElementById('queuePosition').textContent = `Position dans la file : ${position}`;
-            document.getElementById('onlineCount').textContent = `🟢 Joueurs en ligne : ${onlineCount}`;
-            
-            if (estimatedTime < 60) {
-                document.getElementById('estimatedTime').textContent = `Temps d'attente estimé : ~${estimatedTime}s`;
-            } else {
-                document.getElementById('estimatedTime').textContent = `Temps d'attente estimé : ~${Math.floor(estimatedTime/60)}min`;
-            }
-        }
-
-        function foundMatch() {
-            clearInterval(matchmakingTimer);
-            
-            // Générer un adversaire aléatoire
-            const opponentNames = [
-                'Emma_BTS', 'Lucas_MCO', 'Chloé_Marketing', 'Nathan_Commerce', 
-                'Léa_Distribution', 'Hugo_Vente', 'Camille_Merchandising', 'Arthur_Digital',
-                'Inès_Retail', 'Maxime_Business', 'Sarah_Commerce', 'Thomas_Marketing'
-            ];
-            const opponentName = opponentNames[Math.floor(Math.random() * opponentNames.length)];
-            
-            // Créer la salle de jeu
-            const roomCode = generateRoomCode();
-            currentRoom = roomCode;
-            
-            rooms[roomCode] = {
-                players: [currentPlayer, opponentName],
-                gameState: 'ready',
-                createdAt: Date.now(),
-                isMatchmaking: true
-            };
-            
-            // Retirer de la queue
-            matchmakingQueue = matchmakingQueue.filter(entry => entry.player !== currentPlayer);
-            saveData();
-            
-            showMatchFound(opponentName);
-            
-            // Démarrer le jeu après un court délai
-            setTimeout(() => {
-                startGameSession();
-            }, 2000);
-        }
-
-        function cancelMatchmaking() {
-            clearInterval(matchmakingTimer);
-            
-            // Retirer de la queue
-            matchmakingQueue = matchmakingQueue.filter(entry => entry.player !== currentPlayer);
-            saveData();
-            
-            backToLobby();
-        }
-        // Fonctions principales du jeu
-        function login() {
-            const playerName = document.getElementById('playerName').value.trim();
-            if (!playerName) {
-                alert('Veuillez entrer votre nom');
-                return;
-            }
-            
-            currentPlayer = playerName;
-            
-            if (!playerDatabase[playerName]) {
-                playerDatabase[playerName] = {
-                    totalScore: 0,
-                    gamesPlayed: 0,
-                    wordsGuessed: 0
-                };
-            }
-            
-            document.getElementById('currentPlayerName').textContent = playerName;
-            document.getElementById('playerTotalScore').textContent = playerDatabase[playerName].totalScore;
-            
-            saveData();
-            updateLeaderboard();
-            showScreen('lobbyScreen');
-        }
-
+        // Fonctions de salle privée
         function createRoom() {
             const roomCode = generateRoomCode();
             currentRoom = roomCode;
             
             rooms[roomCode] = {
-                players: [currentPlayer],
+                players: [currentUser],
                 gameState: 'waiting',
                 createdAt: Date.now()
             };
@@ -1190,7 +1271,7 @@
             saveData();
             showScreen('waitingScreen');
             
-            // Simuler l'arrivée d'un joueur après quelques secondes (pour test)
+            // Simuler l'arrivée d'un joueur après quelques secondes
             setTimeout(() => {
                 if (document.getElementById('waitingScreen').classList.contains('active')) {
                     simulatePlayerJoin();
@@ -1216,7 +1297,7 @@
             }
             
             currentRoom = roomCode;
-            rooms[roomCode].players.push(currentPlayer);
+            rooms[roomCode].players.push(currentUser);
             saveData();
             
             startGameSession();
@@ -1233,19 +1314,7 @@
             }
         }
 
-        function playOffline() {
-            // Mode test hors-ligne
-            const botNames = ['Emma', 'Lucas', 'Chloe', 'Nathan', 'Lea', 'Hugo'];
-            const botName = botNames[Math.floor(Math.random() * botNames.length)];
-            
-            gameState.player1.name = currentPlayer;
-            gameState.player2.name = botName;
-            gameState.player1.score = 0;
-            gameState.player2.score = 0;
-            
-            startGameSession();
-        }
-
+        // Fonctions principales du jeu
         function startGameSession() {
             if (currentRoom && rooms[currentRoom]) {
                 const players = rooms[currentRoom].players;
@@ -1275,7 +1344,7 @@
             
             // Alterner qui donne les indices
             gameState.isMyTurn = gameState.currentGuesser === 1;
-            gameState.isGuesser = gameState.currentGuesser === 1 && gameState.player1.name === currentPlayer;
+            gameState.isGuesser = gameState.currentGuesser === 1 && gameState.player1.name === currentUser;
             gameState.currentGuesser = gameState.currentGuesser === 1 ? 2 : 1;
             
             // Mise à jour de l'interface
@@ -1284,7 +1353,7 @@
             document.getElementById('difficultyDisplay').innerHTML = 
                 `<span class="difficulty-${wordData.difficulty}">Difficulté : ${wordData.difficulty.toUpperCase()}</span>`;
             
-            if (gameState.isGuesser || !gameState.isMyTurn) {
+            if (gameState.isGuesser || (!gameState.isMyTurn && !isTrainingMode)) {
                 // Je suis le devineur ou ce n'est pas mon tour
                 document.getElementById('wordToGuess').textContent = `${wordData.word.length} lettres`;
                 document.getElementById('wordToGuess').classList.add('word-hidden');
@@ -1300,21 +1369,24 @@
             
             updateGameDisplay();
             startTimer();
+            
+            // Si c'est le mode entraînement et que c'est au bot de donner un indice
+            if (isTrainingMode && !gameState.isGuesser && !gameState.isMyTurn) {
+                giveBotClue();
+            }
         }
 
         function updatePlayerTurnDisplay() {
             const player1Info = document.getElementById('player1Info');
             const player2Info = document.getElementById('player2Info');
             
-            // Retirer les classes précédentes
             player1Info.classList.remove('current-turn');
             player2Info.classList.remove('current-turn');
             
-            // Ajouter la classe au joueur actuel
             if (gameState.currentGuesser === 1) {
-                player2Info.classList.add('current-turn'); // Player2 donne les indices
+                player2Info.classList.add('current-turn');
             } else {
-                player1Info.classList.add('current-turn'); // Player1 donne les indices
+                player1Info.classList.add('current-turn');
             }
         }
 
@@ -1323,10 +1395,13 @@
             document.getElementById('player1Score').textContent = gameState.player1.score;
             document.getElementById('player2Score').textContent = gameState.player2.score;
             
-            const cluesHTML = gameState.clues.map(clue => `<span class="clue">${clue}</span>`).join('');
+            const cluesHTML = gameState.clues.map((clue, index) => {
+                const isBot = isTrainingMode && gameState.currentWord.botClues && 
+                              gameState.currentWord.botClues.includes(clue);
+                return `<span class="clue ${isBot ? 'bot-clue' : ''}">${clue}</span>`;
+            }).join('');
             document.getElementById('cluesList').innerHTML = cluesHTML;
             
-            // Mise à jour du timer
             const timerElement = document.getElementById('timer');
             timerElement.textContent = gameState.timeLeft;
             if (gameState.timeLeft <= 10) {
@@ -1353,17 +1428,14 @@
             const cleanClue = clue.toLowerCase().trim();
             const cleanTarget = targetWord.toLowerCase();
             
-            // Vérifications de base
             if (cleanClue.length < 2) return { valid: false, reason: "L'indice doit contenir au moins 2 caractères" };
             if (cleanClue.includes(' ')) return { valid: false, reason: "Un seul mot autorisé" };
             if (cleanClue === cleanTarget) return { valid: false, reason: "L'indice ne peut pas être le mot à deviner" };
             
-            // Vérification similarité phonétique basique
             if (cleanTarget.includes(cleanClue) || cleanClue.includes(cleanTarget.substring(0, 3))) {
                 return { valid: false, reason: "L'indice est trop proche du mot à deviner" };
             }
             
-            // Vérifier si l'indice a déjà été donné
             if (gameState.clues.some(existingClue => existingClue.toLowerCase() === cleanClue)) {
                 return { valid: false, reason: "Cet indice a déjà été donné" };
             }
@@ -1405,11 +1477,6 @@
         }
 
         function makeGuess() {
-            if (isTrainingMode) {
-                makeTrainingGuess();
-                return;
-            }
-            
             const guessInput = document.getElementById('guessInput');
             const guess = guessInput.value.trim().toLowerCase();
             
@@ -1437,24 +1504,22 @@
                 return;
             }
             
-            // Retourner au mode indice
             document.getElementById('clueInputSection').style.display = 'block';
             document.getElementById('guessSection').style.display = 'none';
             document.getElementById('wordToGuess').textContent = gameState.currentWord.word;
             document.getElementById('wordToGuess').classList.remove('word-hidden');
             document.getElementById('guessInput').value = '';
+            
+            // Si mode entraînement, faire donner un indice au bot
+            if (isTrainingMode) {
+                giveBotClue();
+            }
         }
 
         function calculateScore(timeUsed, cluesUsed, difficulty) {
             let baseScore = 100;
-            
-            // Bonus temps (plus c'est rapide, plus c'est bon)
             const timeBonus = Math.max(0, 60 - timeUsed) * 2;
-            
-            // Bonus indices (moins d'indices = plus de points)
             const clueBonus = (4 - cluesUsed) * 25;
-            
-            // Bonus difficulté
             const difficultyMultiplier = { easy: 1, medium: 1.5, hard: 2 };
             const difficultyBonus = Math.round(baseScore * (difficultyMultiplier[difficulty] - 1));
             
@@ -1472,11 +1537,27 @@
                 gameState.player1.score += pointsEarned;
                 gameState.player2.score += pointsEarned;
                 
-                // Mettre à jour la base de données
-                if (playerDatabase[currentPlayer]) {
-                    playerDatabase[currentPlayer].totalScore += pointsEarned;
-                    playerDatabase[currentPlayer].wordsGuessed++;
+                // Mettre à jour la base de données utilisateur
+                if (currentUser && userDatabase[currentUser]) {
+                    userDatabase[currentUser].totalScore += pointsEarned;
+                    userDatabase[currentUser].wordsGuessed++;
+                    userDatabase[currentUser].lastLogin = Date.now();
                 }
+                
+                // Enregistrer l'historique du jeu
+                gameHistory.push({
+                    player: currentUser,
+                    opponent: gameState.player2.name,
+                    word: gameState.currentWord.word,
+                    success: success,
+                    timeUsed: timeUsed,
+                    cluesUsed: gameState.clues.length,
+                    pointsEarned: pointsEarned,
+                    difficulty: gameState.currentWord.difficulty,
+                    mode: isTrainingMode ? 'training' : 'multiplayer',
+                    timestamp: Date.now()
+                });
+                
                 saveData();
             }
             
@@ -1498,29 +1579,25 @@
         }
 
         function nextRound() {
-            if (isTrainingMode) {
-                startTrainingRound();
-            } else {
-                startNewRound();
-            }
+            startNewRound();
             showScreen('gameScreen');
         }
 
         function backToLobby() {
-            if (currentPlayer && playerDatabase[currentPlayer]) {
-                playerDatabase[currentPlayer].gamesPlayed++;
+            if (currentUser && userDatabase[currentUser]) {
+                userDatabase[currentUser].gamesPlayed++;
                 saveData();
                 updateLeaderboard();
-                document.getElementById('playerTotalScore').textContent = playerDatabase[currentPlayer].totalScore;
+                updateUserStats();
             }
             
-            // Nettoyer la salle et la queue
+            // Nettoyer
             if (currentRoom && rooms[currentRoom]) {
                 delete rooms[currentRoom];
+                saveData();
             }
-            matchmakingQueue = matchmakingQueue.filter(entry => entry.player !== currentPlayer);
-            clearInterval(matchmakingTimer);
             currentRoom = null;
+            isTrainingMode = false;
             
             showScreen('lobbyScreen');
         }
@@ -1532,7 +1609,6 @@
         function endGame() {
             if (confirm('Êtes-vous sûr de vouloir abandonner la partie ?')) {
                 clearInterval(gameState.timer);
-                clearInterval(matchmakingTimer);
                 backToLobby();
             }
         }
@@ -1541,8 +1617,12 @@
         document.addEventListener('DOMContentLoaded', function() {
             updateLeaderboard();
             
-            // Gestion de la touche Entrée
-            document.getElementById('playerName').addEventListener('keypress', function(e) {
+            // Gestion des touches Entrée
+            document.getElementById('userName').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') login();
+            });
+            
+            document.getElementById('userPassword').addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') login();
             });
             
@@ -1562,11 +1642,25 @@
                 e.target.value = e.target.value.toUpperCase();
             });
             
-            // Nettoyage périodique des anciennes salles et de la queue
+            // Nettoyage périodique
             setInterval(() => {
-                cleanupOldData();
-            }, 300000); // Toutes les 5 minutes
+                const now = Date.now();
+                Object.keys(rooms).forEach(roomCode => {
+                    if (now - rooms[roomCode].createdAt > 3600000) {
+                        delete rooms[roomCode];
+                    }
+                });
+                
+                // Nettoyer la queue de matchmaking
+                if (matchmakingQueue.length > 10) {
+                    matchmakingQueue = matchmakingQueue.slice(-5);
+                }
+                
+                saveData();
+            }, 300000);
         });
     </script>
+</body>
+</html>
 </body>
 </html>
