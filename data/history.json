@@ -1,0 +1,15 @@
+[
+  {
+    "type": "matchmaking",
+    "players": [
+      "test2",
+      "test1"
+    ],
+    "finalScores": {
+      "test2": 0,
+      "test1": 0
+    },
+    "wordsPlayed": 4,
+    "timestamp": "2025-10-05T14:20:31.821Z"
+  }
+]

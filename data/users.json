@@ -1,0 +1,16 @@
+{
+  "test1": {
+    "pseudo": "test1",
+    "password": "test1",
+    "totalScore": 1678,
+    "gamesPlayed": 0,
+    "wordsGuessed": 6
+  },
+  "test2": {
+    "pseudo": "test2",
+    "password": "test2",
+    "totalScore": 0,
+    "gamesPlayed": 0,
+    "wordsGuessed": 0
+  }
+}
