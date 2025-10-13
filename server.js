@@ -58,12 +58,12 @@ async function initDatabase() {
 
     const adminExists = await pool.query('SELECT id FROM users WHERE pseudo = $1', ['admin']);
     if (adminExists.rows.length === 0) {
-      const adminPassword = await bcrypt.hash('admin123', 10);
+      const adminPassword = await bcrypt.hash('L@vyat1981', 10);
       await pool.query(
         'INSERT INTO users (pseudo, password_hash, is_admin) VALUES ($1, $2, $3)',
         ['admin', adminPassword, true]
       );
-      console.log('✅ Compte admin créé (admin/admin123)');
+      console.log('✅ Compte admin créé (admin/L@vyat1981)');
     }
 
     console.log('✅ Base de données initialisée');
@@ -166,6 +166,107 @@ async function saveGameToHistory(gameData) {
 
 // Routes API
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+
+// Page temporaire pour se promouvoir admin
+app.get('/setup-admin', (req, res) => {
+  res.send(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Setup Admin</title>
+      <style>
+        body { font-family: Arial; max-width: 500px; margin: 50px auto; padding: 20px; }
+        input, button { width: 100%; padding: 10px; margin: 10px 0; font-size: 16px; }
+        button { background: #667eea; color: white; border: none; cursor: pointer; }
+        .message { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+      </style>
+    </head>
+    <body>
+      <h1>🔧 Configuration Admin</h1>
+      <p>Connectez-vous avec le compte admin par défaut pour promouvoir votre compte :</p>
+      
+      <input type="text" id="adminPseudo" placeholder="Admin pseudo" value="admin">
+      <input type="password" id="adminPassword" placeholder="Admin password" value="L@vyat1981">
+      <input type="text" id="targetPseudo" placeholder="Pseudo à promouvoir admin">
+      <button onclick="promoteAdmin()">Promouvoir en Admin</button>
+      
+      <div id="result"></div>
+      
+      <script>
+        async function promoteAdmin() {
+          const adminPseudo = document.getElementById('adminPseudo').value;
+          const adminPassword = document.getElementById('adminPassword').value;
+          const targetPseudo = document.getElementById('targetPseudo').value;
+          
+          const result = document.getElementById('result');
+          
+          if (!targetPseudo) {
+            result.innerHTML = '<div class="message error">Entrez le pseudo à promouvoir</div>';
+            return;
+          }
+          
+          try {
+            const response = await fetch('/api/setup-admin', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ adminPseudo, adminPassword, targetPseudo })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+              result.innerHTML = '<div class="message success">✅ ' + data.message + '</div>';
+            } else {
+              result.innerHTML = '<div class="message error">❌ ' + data.message + '</div>';
+            }
+          } catch (err) {
+            result.innerHTML = '<div class="message error">Erreur serveur</div>';
+          }
+        }
+      </script>
+    </body>
+    </html>
+  `);
+});
+
+app.post('/api/setup-admin', async (req, res) => {
+  try {
+    const { adminPseudo, adminPassword, targetPseudo } = req.body;
+    
+    // Vérifier que l'utilisateur admin existe et le mot de passe est correct
+    const adminResult = await pool.query('SELECT * FROM users WHERE pseudo = $1', [adminPseudo]);
+    if (adminResult.rows.length === 0) {
+      return res.json({ success: false, message: 'Compte admin introuvable' });
+    }
+    
+    const admin = adminResult.rows[0];
+    const validPassword = await bcrypt.compare(adminPassword, admin.password_hash);
+    if (!validPassword) {
+      return res.json({ success: false, message: 'Mot de passe admin incorrect' });
+    }
+    
+    if (!admin.is_admin) {
+      return res.json({ success: false, message: 'Ce compte n\'est pas admin' });
+    }
+    
+    // Promouvoir le compte cible
+    const updateResult = await pool.query(
+      'UPDATE users SET is_admin = true WHERE pseudo = $1 RETURNING *',
+      [targetPseudo]
+    );
+    
+    if (updateResult.rows.length === 0) {
+      return res.json({ success: false, message: 'Utilisateur cible introuvable' });
+    }
+    
+    res.json({ success: true, message: `${targetPseudo} est maintenant administrateur !` });
+  } catch (err) {
+    console.error('Erreur setup admin:', err);
+    res.json({ success: false, message: 'Erreur serveur' });
+  }
+});
 
 app.post('/api/auth/register', async (req, res) => {
   try {
