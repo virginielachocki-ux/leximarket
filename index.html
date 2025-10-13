@@ -1022,11 +1022,70 @@
                 return;
             }
             
-            socket.emit('user_login', { pseudo: userName, password });
+            // Appel API au lieu de socket pour login
+            fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ pseudo: userName, password })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    currentUser = data.user.pseudo;
+                    currentUserData = data.user;
+                    document.getElementById('playerName').textContent = currentUser;
+                    document.getElementById('playerScore').textContent = data.user.totalScore;
+                    showScreen('modeScreen');
+                    showMessage('success', 'Connexion réussie !');
+                    
+                    // Initialiser socket après connexion réussie
+                    if (!socket || !socket.connected) {
+                        initSocket();
+                    }
+                } else {
+                    showMessage('error', data.message || 'Identifiants incorrects');
+                }
+            })
+            .catch(err => {
+                showMessage('error', 'Erreur de connexion au serveur');
+                console.error(err);
+            });
         }
 
         function register() {
-            login();
+            const userName = document.getElementById('userName').value.trim();
+            const password = document.getElementById('userPassword').value.trim();
+            const email = document.getElementById('userEmail').value.trim();
+            
+            if (!userName || !password) {
+                showMessage('error', 'Pseudo et mot de passe requis');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showMessage('error', 'Mot de passe trop court (min 6 caractères)');
+                return;
+            }
+            
+            fetch('/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ pseudo: userName, password, email })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage('success', 'Compte créé ! Connectez-vous maintenant');
+                    // Auto-login après inscription
+                    setTimeout(() => login(), 1500);
+                } else {
+                    showMessage('error', data.message || 'Erreur lors de la création du compte');
+                }
+            })
+            .catch(err => {
+                showMessage('error', 'Erreur de connexion au serveur');
+                console.error(err);
+            });
         }
 
         function logout() {
@@ -1037,11 +1096,33 @@
         }
 
         function showAdmin() {
-            loadVocabulary();
-            loadDictionaryCount();
-            loadHistory();
-            showScreen('adminScreen');
-            showAdminTab('vocabulary');
+            // Vérifier si l'utilisateur est admin
+            if (!currentUser) {
+                showMessage('error', 'Vous devez être connecté');
+                return;
+            }
+            
+            fetch('/api/auth/check-admin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ pseudo: currentUser })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.isAdmin) {
+                    loadVocabulary();
+                    loadDictionaryCount();
+                    loadHistory();
+                    showScreen('adminScreen');
+                    showAdminTab('vocabulary');
+                } else {
+                    showMessage('error', '⛔ Accès refusé - Vous n\'êtes pas administrateur');
+                }
+            })
+            .catch(err => {
+                showMessage('error', 'Erreur de vérification');
+                console.error(err);
+            });
         }
 
         function showAdminTab(tabName) {
@@ -1234,7 +1315,7 @@
             fetch('/api/vocabulary/add', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ word, definition, difficulty, botClues: clues, forbiddenWords })
+                body: JSON.stringify({ word, definition, difficulty, botClues: clues, forbiddenWords, adminPseudo: currentUser })
             })
             .then(res => res.json())
             .then(data => {
@@ -1262,7 +1343,7 @@
             fetch('/api/vocabulary/delete', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ difficulty, index })
+                body: JSON.stringify({ difficulty, index, adminPseudo: currentUser })
             })
             .then(res => res.json())
             .then(data => {
@@ -1648,6 +1729,13 @@
 
         // Initialisation
         document.addEventListener('DOMContentLoaded', function() {
+            // Vérifier si on arrive sur la page sans être connecté
+            const currentScreen = document.querySelector('.screen.active');
+            if (currentScreen && currentScreen.id !== 'loginScreen' && !currentUser) {
+                // Rediriger vers la page de connexion
+                showScreen('loginScreen');
+            }
+            
             initSocket();
             
             document.getElementById('userName').addEventListener('keypress', (e) => {
