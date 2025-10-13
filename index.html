@@ -1053,22 +1053,24 @@
         }
 
         function register() {
-    const userName = document.getElementById('userName').value.trim();
-    const password = document.getElementById('userPassword').value.trim();
-    
-    if (!userName || !password) {
-        showMessage('error', 'Pseudo et mot de passe requis');
-        return;
-    }
-    
-    if (password.length < 6) {
-        showMessage('error', 'Mot de passe trop court (min 6 caractères)');
-        return;
-    }           
+            const userName = document.getElementById('userName').value.trim();
+            const password = document.getElementById('userPassword').value.trim();
+            const email = document.getElementById('userEmail').value.trim();
+            
+            if (!userName || !password) {
+                showMessage('error', 'Pseudo et mot de passe requis');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showMessage('error', 'Mot de passe trop court (min 6 caractères)');
+                return;
+            }
+            
             fetch('/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ pseudo: userName, password, email: '' })
+                body: JSON.stringify({ pseudo: userName, password, email })
             })
             .then(res => res.json())
             .then(data => {
@@ -1735,14 +1737,18 @@
 
         // Initialisation
         document.addEventListener('DOMContentLoaded', function() {
-            // Vérifier si on arrive sur la page sans être connecté
-            const currentScreen = document.querySelector('.screen.active');
-            if (currentScreen && currentScreen.id !== 'loginScreen' && !currentUser) {
-                // Rediriger vers la page de connexion
+            // Charger la session sauvegardée
+            if (loadSession()) {
+                // Utilisateur déjà connecté
+                document.getElementById('playerName').textContent = currentUser;
+                document.getElementById('playerScore').textContent = currentUserData.totalScore || 0;
+                showScreen('modeScreen');
+                initSocket();
+            } else {
+                // Pas de session, afficher la page de connexion
                 showScreen('loginScreen');
+                initSocket();
             }
-            
-            initSocket();
             
             document.getElementById('userName').addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') login();
@@ -1763,5 +1769,3 @@
     </script>
 </body>
 </html>
-
-
