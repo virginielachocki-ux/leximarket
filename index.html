@@ -497,7 +497,7 @@
                 
                 <button class="btn" onclick="login()">Se connecter</button>
                 <button class="btn btn-secondary" onclick="register()">Créer un compte</button>
-                <button class="btn btn-admin" onclick="showAdmin()">👤 Admin</button>
+                <button class="btn btn-admin" onclick="showAdminButton()">👤 Admin</button>
             </div>
         </div>
 
@@ -1093,6 +1093,14 @@
             currentUser = null;
             showScreen('loginScreen');
             initSocket();
+        }
+
+        function showAdminButton() {
+            if (!currentUser) {
+                showMessage('error', 'Connectez-vous d\'abord avec un compte admin');
+                return;
+            }
+            showAdmin();
         }
 
         function showAdmin() {
