@@ -1053,19 +1053,38 @@
         }
 
         function register() {
-            const userName = document.getElementById('userName').value.trim();
-            const password = document.getElementById('userPassword').value.trim();
-            const email = document.getElementById('userEmail').value.trim();
-            
-            if (!userName || !password) {
-                showMessage('error', 'Pseudo et mot de passe requis');
-                return;
-            }
-            
-            if (password.length < 6) {
-                showMessage('error', 'Mot de passe trop court (min 6 caractères)');
-                return;
-            }
+    const userName = document.getElementById('userName').value.trim();
+    const password = document.getElementById('userPassword').value.trim();
+    
+    if (!userName || !password) {
+        showMessage('error', 'Pseudo et mot de passe requis');
+        return;
+    }
+    
+    if (password.length < 6) {
+        showMessage('error', 'Mot de passe trop court (min 6 caractères)');
+        return;
+    }
+    
+    fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pseudo: userName, password, email: '' })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            showMessage('success', 'Compte créé ! Connectez-vous');
+            setTimeout(() => login(), 1500);
+        } else {
+            showMessage('error', data.message || 'Erreur');
+        }
+    })
+    .catch(err => {
+        showMessage('error', 'Erreur serveur');
+        console.error(err);
+    });
+}
             
             fetch('/api/auth/register', {
                 method: 'POST',
@@ -1765,3 +1784,4 @@
     </script>
 </body>
 </html>
+
