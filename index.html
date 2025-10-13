@@ -1064,32 +1064,11 @@
     if (password.length < 6) {
         showMessage('error', 'Mot de passe trop court (min 6 caractères)');
         return;
-    }
-    
-    fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pseudo: userName, password, email: '' })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            showMessage('success', 'Compte créé ! Connectez-vous');
-            setTimeout(() => login(), 1500);
-        } else {
-            showMessage('error', data.message || 'Erreur');
-        }
-    })
-    .catch(err => {
-        showMessage('error', 'Erreur serveur');
-        console.error(err);
-    });
-}
-            
+    }           
             fetch('/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ pseudo: userName, password, email })
+                body: JSON.stringify({ pseudo: userName, password, email: '' })
             })
             .then(res => res.json())
             .then(data => {
@@ -1784,4 +1763,5 @@
     </script>
 </body>
 </html>
+
 
