@@ -143,7 +143,6 @@
             font-size: 14px;
         }
 
-        /* PAGE DE JEU */
         #gameScreen {
             padding: 0 !important;
             border-radius: 0 !important;
@@ -480,42 +479,40 @@
 <body>
     <div class="container">
         <!-- PAGE DE CONNEXION -->
-        <!-- PAGE DE CONNEXION -->
-<div class="screen active" id="loginScreen">
-    <h1 class="page-title">🎯 LexiMarket</h1>
-    <p style="text-align: center; color: #666; margin-bottom: 30px;">Jeu de vocabulaire marketing pour BTS MCO</p>
-    
-    <div style="max-width: 400px; margin: 0 auto;">
-        <div class="form-group">
-            <label for="userName">Pseudo :</label>
-            <input type="text" id="userName" placeholder="Votre pseudo">
+        <div class="screen active" id="loginScreen">
+            <h1 class="page-title">🎯 LexiMarket</h1>
+            <p style="text-align: center; color: #666; margin-bottom: 30px;">Jeu de vocabulaire marketing pour BTS MCO</p>
+            
+            <div style="max-width: 400px; margin: 0 auto;">
+                <div class="form-group">
+                    <label for="userName">Pseudo :</label>
+                    <input type="text" id="userName" placeholder="Votre pseudo">
+                </div>
+                
+                <div class="form-group">
+                    <label for="userEmail">Email :</label>
+                    <input type="email" id="userEmail" placeholder="votre@email.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="userPassword">Mot de passe :</label>
+                    <input type="password" id="userPassword" placeholder="Votre mot de passe">
+                </div>
+                
+                <button class="btn" onclick="login()">Se connecter</button>
+                <button class="btn btn-secondary" onclick="register()">Créer un compte</button>
+                <button class="btn btn-admin" onclick="showAdminButton()">👤 Admin</button>
+            </div>
         </div>
-        
-        <div class="form-group">
-            <label for="userEmail">Email :</label>
-            <input type="email" id="userEmail" placeholder="votre@email.com">
-        </div>
-        
-        <div class="form-group">
-            <label for="userPassword">Mot de passe :</label>
-            <input type="password" id="userPassword" placeholder="Votre mot de passe">
-        </div>
-        
-        <button class="btn" onclick="login()">Se connecter</button>
-        <button class="btn btn-secondary" onclick="register()">Créer un compte</button>
-        <button class="btn btn-admin" onclick="showAdminButton()">👤 Admin</button>
-    </div>
-</div>
 
         <!-- PAGE ADMIN -->
         <div class="screen" id="adminScreen">
             <h1 class="page-title">🔧 Administration</h1>
             
             <div style="margin-bottom: 30px; text-align: center;">
-                <button class="btn btn-secondary" onclick="showScreen('loginScreen')" style="max-width: 300px; margin: 0 auto;">Retour à l'accueil</button>
+                <button class="btn btn-secondary" onclick="showScreen('modeScreen')" style="max-width: 300px; margin: 0 auto;">Retour au menu</button>
             </div>
 
-            <!-- Onglets Admin -->
             <div style="display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap;">
                 <button class="btn" onclick="showAdminTab('vocabulary')" id="tabVocab">📚 Vocabulaire</button>
                 <button class="btn btn-secondary" onclick="showAdminTab('dictionary')" id="tabDict">📖 Dictionnaire</button>
@@ -524,7 +521,6 @@
 
             <!-- TAB VOCABULAIRE -->
             <div id="adminTabVocabulary" class="admin-tab">
-                <!-- Section Ajouter un mot -->
                 <div style="background: #e8f5e8; padding: 30px; border-radius: 15px; margin-bottom: 30px; border: 3px solid #28a745;">
                     <h2 style="color: #155724; margin-bottom: 20px;">➕ Ajouter un nouveau mot</h2>
                     
@@ -566,7 +562,6 @@
                     <button class="btn btn-success" onclick="addWord()">Ajouter le mot</button>
                 </div>
 
-                <!-- Export/Import -->
                 <div style="background: #fff3cd; padding: 20px; border-radius: 15px; margin-bottom: 30px; border: 3px solid #ffc107;">
                     <h3 style="color: #856404; margin-bottom: 15px;">💾 Import / Export Vocabulaire</h3>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
@@ -578,7 +573,6 @@
                     </div>
                 </div>
 
-                <!-- Liste des mots -->
                 <div style="background: #f8f9fa; padding: 30px; border-radius: 15px; border: 3px solid #667eea;">
                     <h2 style="color: #333; margin-bottom: 20px;">📚 Liste des mots (<span id="totalWordsCount">0</span>)</h2>
                     
@@ -843,70 +837,177 @@
     </div>
 
     <script>
+        // === VARIABLES GLOBALES ===
         let socket = null;
         let currentUser = null;
+        let currentUserData = null;
         let currentRoom = null;
         let currentRole = null;
-        let currentGameType = null; // 'training', 'matchmaking', 'private'
+        let currentGameType = null;
         let queueTimer = null;
         let queueStartTime = null;
         let gameExchanges = [];
         let currentFilter = 'all';
         let vocabularyData = {};
         let currentPrivateRoomCode = null;
-// === GESTION DE LA SESSION ===
-let currentUserData = null;
 
-function saveSession() {
-    if (currentUser && currentUserData) {
-        localStorage.setItem('leximarket_session', JSON.stringify({
-            pseudo: currentUser,
-            userData: currentUserData,
-            timestamp: Date.now()
-        }));
-    }
-}
-
-function loadSession() {
-    try {
-        const sessionData = localStorage.getItem('leximarket_session');
-        if (!sessionData) return false;
-        
-        const session = JSON.parse(sessionData);
-        const maxAge = 24 * 60 * 60 * 1000; // 24 heures
-        
-        if (Date.now() - session.timestamp > maxAge) {
-            localStorage.removeItem('leximarket_session');
-            return false;
+        // === GESTION DE LA SESSION ===
+        function saveSession() {
+            if (currentUser && currentUserData) {
+                localStorage.setItem('leximarket_session', JSON.stringify({
+                    pseudo: currentUser,
+                    userData: currentUserData,
+                    timestamp: Date.now()
+                }));
+            }
         }
-        
-        currentUser = session.pseudo;
-        currentUserData = session.userData;
-        return true;
-    } catch (err) {
-        console.error('Erreur chargement session:', err);
-        return false;
-    }
-}
 
-function clearSession() {
-    localStorage.removeItem('leximarket_session');
-}
+        function loadSession() {
+            try {
+                const sessionData = localStorage.getItem('leximarket_session');
+                if (!sessionData) return false;
+                
+                const session = JSON.parse(sessionData);
+                const maxAge = 24 * 60 * 60 * 1000;
+                
+                if (Date.now() - session.timestamp > maxAge) {
+                    localStorage.removeItem('leximarket_session');
+                    return false;
+                }
+                
+                currentUser = session.pseudo;
+                currentUserData = session.userData;
+                return true;
+            } catch (err) {
+                console.error('Erreur chargement session:', err);
+                return false;
+            }
+        }
 
-// === FIN GESTION SESSION ===
+        function clearSession() {
+            localStorage.removeItem('leximarket_session');
+        }
+
+        // === AUTHENTIFICATION ===
+        function login() {
+            const userName = document.getElementById('userName').value.trim();
+            const password = document.getElementById('userPassword').value.trim();
+            
+            if (!userName || !password) {
+                showMessage('error', 'Pseudo et mot de passe requis');
+                return;
+            }
+            
+            fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ pseudo: userName, password })
+            })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error('Erreur serveur (code ' + res.status + ')');
+                }
+                return res.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    currentUser = data.user.pseudo;
+                    currentUserData = data.user;
+                    saveSession();
+                    
+                    document.getElementById('playerName').textContent = currentUser;
+                    document.getElementById('playerScore').textContent = data.user.totalScore || 0;
+                    showScreen('modeScreen');
+                    showMessage('success', 'Connexion réussie !');
+                    
+                    if (!socket || !socket.connected) {
+                        initSocket();
+                    }
+                } else {
+                    showMessage('error', data.message || 'Identifiants incorrects');
+                }
+            })
+            .catch(err => {
+                console.error('Erreur login:', err);
+                showMessage('error', 'Impossible de se connecter au serveur');
+            });
+        }
+
+        function register() {
+            const userName = document.getElementById('userName').value.trim();
+            const userEmail = document.getElementById('userEmail').value.trim();
+            const password = document.getElementById('userPassword').value.trim();
+            
+            if (!userName || !password || !userEmail) {
+                showMessage('error', 'Tous les champs sont obligatoires');
+                return;
+            }
+            
+            if (userName.length < 3) {
+                showMessage('error', 'Le pseudo doit contenir au moins 3 caractères');
+                return;
+            }
+            
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(userEmail)) {
+                showMessage('error', 'Email invalide');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showMessage('error', 'Mot de passe trop court (min 6 caractères)');
+                return;
+            }
+            
+            fetch('/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    pseudo: userName, 
+                    email: userEmail, 
+                    password: password 
+                })
+            })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error('Erreur serveur (code ' + res.status + ')');
+                }
+                return res.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    showMessage('success', 'Compte créé ! Connexion...');
+                    setTimeout(() => login(), 1500);
+                } else {
+                    showMessage('error', data.message || 'Erreur lors de la création du compte');
+                }
+            })
+            .catch(err => {
+                console.error('Erreur register:', err);
+                showMessage('error', 'Impossible de se connecter au serveur');
+            });
+        }
+
+        function logout() {
+            if (socket) socket.disconnect();
+            currentUser = null;
+            currentUserData = null;
+            clearSession();
+            
+            document.getElementById('userName').value = '';
+            document.getElementById('userEmail').value = '';
+            document.getElementById('userPassword').value = '';
+            
+            showScreen('loginScreen');
+            initSocket();
+        }
+
+        // === SOCKET.IO ===
         function initSocket() {
             socket = io();
             
             socket.on('connect', () => {
                 console.log('Connecté au serveur');
-            });
-            
-            socket.on('login_success', (data) => {
-                currentUser = data.userData.pseudo;
-                document.getElementById('playerName').textContent = currentUser;
-                document.getElementById('playerScore').textContent = data.userData.totalScore;
-                showScreen('modeScreen');
-                showMessage('success', 'Connexion réussie !');
             });
             
             socket.on('matchmaking_joined', (data) => {
@@ -934,7 +1035,6 @@ function clearSession() {
                 document.getElementById('queuePlayers').textContent = data.playersInQueue;
             });
             
-            // ROOM PRIVÉE
             socket.on('private_room_created', (data) => {
                 currentPrivateRoomCode = data.roomCode;
                 document.getElementById('roomCodeDisplay').textContent = data.roomCode;
@@ -950,7 +1050,6 @@ function clearSession() {
                 showMessage('error', data.message);
             });
             
-            // MODE ENTRAÎNEMENT
             socket.on('training_start', (data) => {
                 currentRoom = data.roomCode;
                 currentRole = 'guesser';
@@ -959,13 +1058,10 @@ function clearSession() {
                 
                 document.getElementById('gameRound').textContent = `Manche 1/${data.maxWords}`;
                 document.getElementById('gameRole').textContent = 'Devinez';
-                
-                // CORRECTION: Bot à gauche, Joueur à droite
                 document.getElementById('localPlayerName').textContent = 'Bot';
                 document.getElementById('remotePlayerName').textContent = currentUser;
                 document.getElementById('localPlayerScore').textContent = '0';
                 document.getElementById('remotePlayerScore').textContent = '0';
-                
                 document.getElementById('wordDisplay').style.display = 'none';
                 document.getElementById('wordWaiting').style.display = 'block';
                 document.getElementById('exchangesList').innerHTML = '';
@@ -980,7 +1076,6 @@ function clearSession() {
             });
             
             socket.on('next_round', (data) => {
-                // CORRECTION: Réinitialiser les échanges pour chaque nouveau mot
                 gameExchanges = [];
                 document.getElementById('exchangesList').innerHTML = '';
                 
@@ -1044,6 +1139,7 @@ function clearSession() {
             });
         }
 
+        // === UI ===
         function showScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
@@ -1061,184 +1157,6 @@ function clearSession() {
             setTimeout(() => div.remove(), 3000);
         }
 
-   function login() {
-    const userName = document.getElementById('userName').value.trim();
-    const password = document.getElementById('userPassword').value.trim();
-    
-    if (!userName || !password) {
-        showMessage('error', 'Pseudo et mot de passe requis');
-        return;
-    }
-    
-    fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pseudo: userName, password })
-    })
-    .then(res => {
-        if (!res.ok) {
-            throw new Error('Erreur serveur (code ' + res.status + ')');
-        }
-        return res.json();
-    })
-    .then(data => {
-        if (data.success) {
-            currentUser = data.user.pseudo;
-            currentUserData = data.user;
-            
-            // Sauvegarder la session
-            saveSession();
-            
-            document.getElementById('playerName').textContent = currentUser;
-            document.getElementById('playerScore').textContent = data.user.totalScore || 0;
-            showScreen('modeScreen');
-            showMessage('success', 'Connexion réussie !');
-            
-            // Initialiser socket après connexion réussie
-            if (!socket || !socket.connected) {
-                initSocket();
-            }
-        } else {
-            showMessage('error', data.message || 'Identifiants incorrects');
-        }
-    })
-    .catch(err => {
-        console.error('Erreur login:', err);
-        showMessage('error', 'Impossible de se connecter au serveur');
-    });
-}
-            
-            // Appel API au lieu de socket pour login
-            fetch('/api/auth/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ pseudo: userName, password })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    currentUser = data.user.pseudo;
-                    currentUserData = data.user;
-                    document.getElementById('playerName').textContent = currentUser;
-                    document.getElementById('playerScore').textContent = data.user.totalScore;
-                    showScreen('modeScreen');
-                    showMessage('success', 'Connexion réussie !');
-                    
-                    // Initialiser socket après connexion réussie
-                    if (!socket || !socket.connected) {
-                        initSocket();
-                    }
-                } else {
-                    showMessage('error', data.message || 'Identifiants incorrects');
-                }
-            })
-            .catch(err => {
-                showMessage('error', 'Erreur de connexion au serveur');
-                console.error(err);
-            });
-        }
-
- function register() {
-    const userName = document.getElementById('userName').value.trim();
-    const userEmail = document.getElementById('userEmail').value.trim();
-    const password = document.getElementById('userPassword').value.trim();
-    
-    // Validation des champs
-    if (!userName || !password || !userEmail) {
-        showMessage('error', 'Tous les champs sont obligatoires');
-        return;
-    }
-    
-    // Validation du pseudo
-    if (userName.length < 3) {
-        showMessage('error', 'Le pseudo doit contenir au moins 3 caractères');
-        return;
-    }
-    
-    // Validation de l'email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(userEmail)) {
-        showMessage('error', 'Email invalide');
-        return;
-    }
-    
-    // Validation du mot de passe
-    if (password.length < 6) {
-        showMessage('error', 'Mot de passe trop court (min 6 caractères)');
-        return;
-    }
-    
-    fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-            pseudo: userName, 
-            email: userEmail, 
-            password: password 
-        })
-    })
-    .then(res => {
-        if (!res.ok) {
-            throw new Error('Erreur serveur (code ' + res.status + ')');
-        }
-        return res.json();
-    })
-    .then(data => {
-        if (data.success) {
-            showMessage('success', 'Compte créé ! Connexion...');
-            // Auto-login après inscription
-            setTimeout(() => login(), 1500);
-        } else {
-            showMessage('error', data.message || 'Erreur lors de la création du compte');
-        }
-    })
-    .catch(err => {
-        console.error('Erreur register:', err);
-        showMessage('error', 'Impossible de se connecter au serveur');
-    });
-}
-            
-            if (password.length < 6) {
-                showMessage('error', 'Mot de passe trop court (min 6 caractères)');
-                return;
-            }
-            
-            fetch('/api/auth/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ pseudo: userName, password, email })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    showMessage('success', 'Compte créé ! Connectez-vous maintenant');
-                    // Auto-login après inscription
-                    setTimeout(() => login(), 1500);
-                } else {
-                    showMessage('error', data.message || 'Erreur lors de la création du compte');
-                }
-            })
-            .catch(err => {
-                showMessage('error', 'Erreur de connexion au serveur');
-                console.error(err);
-            });
-        }
-
-function logout() {
-    if (socket) socket.disconnect();
-    currentUser = null;
-    currentUserData = null;
-    clearSession();
-    
-    // Réinitialiser les champs
-    document.getElementById('userName').value = '';
-    document.getElementById('userEmail').value = '';
-    document.getElementById('userPassword').value = '';
-    
-    showScreen('loginScreen');
-    initSocket();
-}
-
         function showAdminButton() {
             if (!currentUser) {
                 showMessage('error', 'Connectez-vous d\'abord avec un compte admin');
@@ -1248,7 +1166,6 @@ function logout() {
         }
 
         function showAdmin() {
-            // Vérifier si l'utilisateur est admin
             if (!currentUser) {
                 showMessage('error', 'Vous devez être connecté');
                 return;
@@ -1288,6 +1205,7 @@ function logout() {
             }
         }
 
+        // === ADMIN - VOCABULAIRE ===
         function loadVocabulary() {
             fetch('/api/vocabulary')
                 .then(res => res.json())
@@ -1300,81 +1218,6 @@ function logout() {
                     vocabularyData = { easy: [], medium: [], hard: [] };
                     displayWords();
                 });
-        }
-
-        function loadDictionaryCount() {
-            fetch('/api/dictionary')
-                .then(res => res.json())
-                .then(data => {
-                    document.getElementById('dictionaryCount').textContent = data.count || 0;
-                })
-                .catch(err => console.error('Erreur:', err));
-        }
-
-        function loadHistory() {
-            fetch('/api/history')
-                .then(res => res.json())
-                .then(data => {
-                    document.getElementById('historyCount').textContent = data.count || 0;
-                    displayHistory(data.history || []);
-                })
-                .catch(err => console.error('Erreur:', err));
-        }
-
-        function displayHistory(history) {
-            const historyList = document.getElementById('historyList');
-            if (history.length === 0) {
-                historyList.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">Aucune partie enregistrée</p>';
-                return;
-            }
-            
-            historyList.innerHTML = history.reverse().map((game, index) => `
-                <div style="background: white; padding: 20px; border-radius: 10px; margin-bottom: 15px; border: 2px solid #e1e5e9;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                        <strong style="font-size: 18px;">#${history.length - index} - ${game.type === 'training' ? '🤖 Entraînement' : '⚡ Multijoueur'}</strong>
-                        <span style="color: #999; font-size: 14px;">${new Date(game.timestamp).toLocaleString('fr-FR')}</span>
-                    </div>
-                    ${game.type === 'training' ? `
-                        <div>Joueur: <strong>${game.player}</strong></div>
-                        <div>Difficulté: <strong>${game.difficulty}</strong></div>
-                        <div>Score: <strong>${game.finalScore} pts</strong></div>
-                        <div>Mots trouvés: <strong>${game.wordsGuessed}</strong></div>
-                    ` : `
-                        <div>Joueurs: <strong>${game.players ? game.players.join(' vs ') : 'N/A'}</strong></div>
-                        <div>Scores: <strong>${game.finalScores ? Object.entries(game.finalScores).map(([p, s]) => `${p}: ${s}`).join(' | ') : 'N/A'}</strong></div>
-                        <div>Mots joués: <strong>${game.wordsPlayed}</strong></div>
-                    `}
-                </div>
-            `).join('');
-        }
-
-        function exportHistory() {
-            fetch('/api/history')
-                .then(res => res.json())
-                .then(data => {
-                    const csv = convertHistoryToCSV(data.history);
-                    const blob = new Blob([csv], { type: 'text/csv' });
-                    const url = URL.createObjectURL(blob);
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.download = 'historique_leximarket_' + new Date().toISOString().split('T')[0] + '.csv';
-                    link.click();
-                    URL.revokeObjectURL(url);
-                    showMessage('success', 'Export réussi !');
-                });
-        }
-
-        function convertHistoryToCSV(history) {
-            const headers = 'Date,Type,Joueurs,Scores,Mots\n';
-            const rows = history.map(g => {
-                const date = new Date(g.timestamp).toLocaleString('fr-FR');
-                const type = g.type === 'training' ? 'Entraînement' : 'Multijoueur';
-                const players = g.type === 'training' ? g.player : (g.players || []).join(' vs ');
-                const scores = g.type === 'training' ? g.finalScore : Object.values(g.finalScores || {}).join('-');
-                const words = g.wordsGuessed || g.wordsPlayed || 0;
-                return `"${date}","${type}","${players}","${scores}","${words}"`;
-            }).join('\n');
-            return headers + rows;
         }
 
         function displayWords() {
@@ -1561,6 +1404,16 @@ function logout() {
             fileInput.value = '';
         }
 
+        // === ADMIN - DICTIONNAIRE ===
+        function loadDictionaryCount() {
+            fetch('/api/dictionary')
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('dictionaryCount').textContent = data.count || 0;
+                })
+                .catch(err => console.error('Erreur:', err));
+        }
+
         function addDictionaryWords() {
             const wordsText = document.getElementById('dictionaryWords').value.trim();
             if (!wordsText) {
@@ -1650,7 +1503,74 @@ function logout() {
             fileInput.value = '';
         }
 
-        // MATCHMAKING
+        // === ADMIN - HISTORIQUE ===
+        function loadHistory() {
+            fetch('/api/history')
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('historyCount').textContent = data.count || 0;
+                    displayHistory(data.history || []);
+                })
+                .catch(err => console.error('Erreur:', err));
+        }
+
+        function displayHistory(history) {
+            const historyList = document.getElementById('historyList');
+            if (history.length === 0) {
+                historyList.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">Aucune partie enregistrée</p>';
+                return;
+            }
+            
+            historyList.innerHTML = history.reverse().map((game, index) => `
+                <div style="background: white; padding: 20px; border-radius: 10px; margin-bottom: 15px; border: 2px solid #e1e5e9;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <strong style="font-size: 18px;">#${history.length - index} - ${game.type === 'training' ? '🤖 Entraînement' : '⚡ Multijoueur'}</strong>
+                        <span style="color: #999; font-size: 14px;">${new Date(game.timestamp).toLocaleString('fr-FR')}</span>
+                    </div>
+                    ${game.type === 'training' ? `
+                        <div>Joueur: <strong>${game.player}</strong></div>
+                        <div>Difficulté: <strong>${game.difficulty}</strong></div>
+                        <div>Score: <strong>${game.finalScore} pts</strong></div>
+                        <div>Mots trouvés: <strong>${game.wordsGuessed}</strong></div>
+                    ` : `
+                        <div>Joueurs: <strong>${game.players ? game.players.join(' vs ') : 'N/A'}</strong></div>
+                        <div>Scores: <strong>${game.finalScores ? Object.entries(game.finalScores).map(([p, s]) => `${p}: ${s}`).join(' | ') : 'N/A'}</strong></div>
+                        <div>Mots joués: <strong>${game.wordsPlayed}</strong></div>
+                    `}
+                </div>
+            `).join('');
+        }
+
+        function exportHistory() {
+            fetch('/api/history')
+                .then(res => res.json())
+                .then(data => {
+                    const csv = convertHistoryToCSV(data.history);
+                    const blob = new Blob([csv], { type: 'text/csv' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = 'historique_leximarket_' + new Date().toISOString().split('T')[0] + '.csv';
+                    link.click();
+                    URL.revokeObjectURL(url);
+                    showMessage('success', 'Export réussi !');
+                });
+        }
+
+        function convertHistoryToCSV(history) {
+            const headers = 'Date,Type,Joueurs,Scores,Mots\n';
+            const rows = history.map(g => {
+                const date = new Date(g.timestamp).toLocaleString('fr-FR');
+                const type = g.type === 'training' ? 'Entraînement' : 'Multijoueur';
+                const players = g.type === 'training' ? g.player : (g.players || []).join(' vs ');
+                const scores = g.type === 'training' ? g.finalScore : Object.values(g.finalScores || {}).join('-');
+                const words = g.wordsGuessed || g.wordsPlayed || 0;
+                return `"${date}","${type}","${players}","${scores}","${words}"`;
+            }).join('\n');
+            return headers + rows;
+        }
+
+        // === MODES DE JEU ===
         function startMatchmaking() {
             socket.emit('join_matchmaking');
         }
@@ -1671,7 +1591,6 @@ function logout() {
             }, 1000);
         }
 
-        // ENTRAÎNEMENT
         function showTrainingOptions() {
             showScreen('trainingOptionsScreen');
         }
@@ -1682,7 +1601,6 @@ function logout() {
             socket.emit('start_training', { difficulty, maxWords });
         }
 
-        // ROOM PRIVÉE
         function showPrivateRoomOptions() {
             document.getElementById('joinRoomSection').style.display = 'none';
             showScreen('privateRoomScreen');
@@ -1706,10 +1624,8 @@ function logout() {
             showScreen('modeScreen');
         }
 
-        // JEU
+        // === JEU ===
         function setupNewGame(data) {
-            console.log('Setup game:', data);
-            
             currentRole = data.yourRole;
             gameExchanges = [];
             
@@ -1743,7 +1659,6 @@ function logout() {
         function updateScores(scores) {
             const players = Object.keys(scores);
             if (currentGameType === 'training') {
-                // En mode training: Bot à gauche, Joueur à droite
                 document.getElementById('localPlayerScore').textContent = scores['Bot'] || 0;
                 document.getElementById('remotePlayerScore').textContent = scores[currentUser] || 0;
             } else if (players.length >= 2) {
@@ -1755,7 +1670,7 @@ function logout() {
         }
 
         function updateTimer(timeLeft) {
-            const percentage = Math.min(Math.max((timeLeft / 60) * 100, 0), 100); // Limite entre 0 et 100%
+            const percentage = Math.min(Math.max((timeLeft / 60) * 100, 0), 100);
             document.getElementById('timerBar').style.width = percentage + '%';
             document.getElementById('timerText').textContent = Math.max(timeLeft, 0) + 's';
         }
@@ -1825,8 +1740,6 @@ function logout() {
         }
 
         function showResults(data) {
-            console.log('Round end:', data);
-            
             document.getElementById('resultTitle').textContent = data.success ? '🎉 Trouvé !' : '⌛ Temps écoulé';
             document.getElementById('resultWord').textContent = data.word;
             document.getElementById('resultDefinition').textContent = data.definition;
@@ -1879,17 +1792,14 @@ function logout() {
             }
         }
 
-        // Initialisation
+        // === INITIALISATION ===
         document.addEventListener('DOMContentLoaded', function() {
-            // Charger la session sauvegardée
             if (loadSession()) {
-                // Utilisateur déjà connecté
                 document.getElementById('playerName').textContent = currentUser;
                 document.getElementById('playerScore').textContent = currentUserData.totalScore || 0;
                 showScreen('modeScreen');
                 initSocket();
             } else {
-                // Pas de session, afficher la page de connexion
                 showScreen('loginScreen');
                 initSocket();
             }
@@ -1913,4 +1823,3 @@ function logout() {
     </script>
 </body>
 </html>
-
