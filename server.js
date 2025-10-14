@@ -366,7 +366,7 @@ app.post('/api/vocabulary/import', async (req, res) => {
   const userResult = await pool.query('SELECT is_admin FROM users WHERE pseudo = $1', [adminPseudo]);
   if (!userResult.rows[0]?.is_admin) return res.json({ success: false, message: 'Accès refusé' });
   
-  if (importData.easy && importData.medium && importData.hard) {
+  if (importData.level1 && importData.level2 && importData.level3 && importData.level4 && importData.level5 && importData.level6) {
     Object.assign(marketingVocabulary, importData);
     saveVocabularyAndDictionary();
     res.json({ success: true });
@@ -503,7 +503,7 @@ io.on('connection', (socket) => {
     const user = connectedUsers.get(socket.id);
     if (!user) return;
     const code = 'BOT_' + generateRoomCode();
-    const diff = data.difficulty || 'easy';
+    const diff = data.difficulty || 'level1';
     activeRooms.set(code, {
       type: 'training', player: user, gameState: 'playing', difficulty: diff,
       currentWord: getRandomWord(diff), botClueIndex: 0, clues: [], turnsLeft: 4, timeLeft: 60,
@@ -711,9 +711,10 @@ async function endRound(code, success, message) {
 
 server.listen(PORT, () => {
   console.log(`🎯 LexiMarket sur le port ${PORT}`);
-  console.log(`📚 ${marketingVocabulary.easy.length + marketingVocabulary.medium.length + marketingVocabulary.hard.length} mots`);
+  console.log(`📚 ${marketingVocabulary.level1.length + marketingVocabulary.level2.length + marketingVocabulary.level3.length + marketingVocabulary.level4.length + marketingVocabulary.level5.length + marketingVocabulary.level6.length} mots`);
   console.log(`📖 ${frenchDictionary.size} mots autorisés`);
 });
+
 
 
 
