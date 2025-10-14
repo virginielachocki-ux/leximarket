@@ -54,15 +54,16 @@
             font-weight: 600;
         }
 
-        .form-group input, .form-group select {
+        .form-group input, .form-group select, .form-group textarea {
             width: 100%;
             padding: 12px;
             border: 2px solid #e1e5e9;
             border-radius: 8px;
             font-size: 16px;
+            font-family: inherit;
         }
 
-        .form-group input:focus, .form-group select:focus {
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
             outline: none;
             border-color: #667eea;
         }
@@ -101,6 +102,22 @@
         .btn-admin {
             background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
             color: #212529;
+        }
+
+        .link-button {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            text-decoration: underline;
+            padding: 5px;
+            font-size: 14px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .link-button:hover {
+            color: #764ba2;
         }
 
         .mode-grid {
@@ -474,60 +491,80 @@
             background: #f8f9fa;
             border-radius: 10px;
         }
+
+        .admin-tab {
+            display: none;
+        }
+
+        .admin-tab.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <!-- PAGE DE CONNEXION -->
-      <!-- PAGE DE CONNEXION -->
-<div class="screen active" id="loginScreen">
-    <h1 class="page-title">🎯 LexiMarket</h1>
-    <p style="text-align: center; color: #666; margin-bottom: 30px;">Jeu de vocabulaire marketing pour BTS MCO</p>
-    
-    <div style="max-width: 400px; margin: 0 auto;">
-        <!-- SECTION CONNEXION -->
-        <div id="loginForm">
-            <h2 style="text-align: center; color: #333; margin-bottom: 20px;">Connexion</h2>
+        <div class="screen active" id="loginScreen">
+            <h1 class="page-title">🎯 LexiMarket</h1>
+            <p style="text-align: center; color: #666; margin-bottom: 30px;">Jeu de vocabulaire marketing pour BTS MCO</p>
             
-            <div class="form-group">
-                <label for="loginUserName">Pseudo :</label>
-                <input type="text" id="loginUserName" placeholder="Votre pseudo">
-            </div>
-            
-            <div class="form-group">
-                <label for="loginPassword">Mot de passe :</label>
-                <input type="password" id="loginPassword" placeholder="Votre mot de passe">
-            </div>
-            
-            <button class="btn" onclick="login()">Se connecter</button>
-            <button class="btn btn-secondary" onclick="showRegisterForm()">Créer un compte</button>
-            <button class="btn btn-admin" onclick="showAdminButton()">👤 Admin</button>
-        </div>
+            <div style="max-width: 400px; margin: 0 auto;">
+                <!-- SECTION CONNEXION -->
+                <div id="loginForm">
+                    <h2 style="text-align: center; color: #333; margin-bottom: 20px;">Connexion</h2>
+                    
+                    <div class="form-group">
+                        <label for="loginUserName">Pseudo :</label>
+                        <input type="text" id="loginUserName" placeholder="Votre pseudo" autocomplete="username">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="loginPassword">Mot de passe :</label>
+                        <input type="password" id="loginPassword" placeholder="Votre mot de passe" autocomplete="current-password">
+                    </div>
+                    
+                    <button class="btn" onclick="login()">Se connecter</button>
+                    <button class="btn btn-secondary" onclick="showRegisterForm()">Créer un compte</button>
+                    <button class="link-button" onclick="showForgotPasswordForm()">Mot de passe oublié ?</button>
+                </div>
 
-        <!-- SECTION INSCRIPTION (cachée par défaut) -->
-        <div id="registerForm" style="display: none;">
-            <h2 style="text-align: center; color: #333; margin-bottom: 20px;">Créer un compte</h2>
-            
-            <div class="form-group">
-                <label for="registerUserName">Pseudo :</label>
-                <input type="text" id="registerUserName" placeholder="Votre pseudo (min 3 caractères)">
+                <!-- SECTION INSCRIPTION -->
+                <div id="registerForm" style="display: none;">
+                    <h2 style="text-align: center; color: #333; margin-bottom: 20px;">Créer un compte</h2>
+                    
+                    <div class="form-group">
+                        <label for="registerUserName">Pseudo :</label>
+                        <input type="text" id="registerUserName" placeholder="Votre pseudo (min 3 caractères)" autocomplete="username">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="registerEmail">Email :</label>
+                        <input type="email" id="registerEmail" placeholder="votre@email.com" autocomplete="email">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="registerPassword">Mot de passe :</label>
+                        <input type="password" id="registerPassword" placeholder="Min 6 caractères" autocomplete="new-password">
+                    </div>
+                    
+                    <button class="btn btn-success" onclick="register()">Créer mon compte</button>
+                    <button class="btn btn-secondary" onclick="showLoginForm()">Retour à la connexion</button>
+                </div>
+
+                <!-- SECTION MOT DE PASSE OUBLIÉ -->
+                <div id="forgotPasswordForm" style="display: none;">
+                    <h2 style="text-align: center; color: #333; margin-bottom: 20px;">Mot de passe oublié</h2>
+                    
+                    <div class="form-group">
+                        <label for="forgotEmail">Email :</label>
+                        <input type="email" id="forgotEmail" placeholder="votre@email.com" autocomplete="email">
+                    </div>
+                    
+                    <button class="btn" onclick="sendResetPassword()">Envoyer le nouveau mot de passe</button>
+                    <button class="btn btn-secondary" onclick="showLoginForm()">Retour à la connexion</button>
+                </div>
             </div>
-            
-            <div class="form-group">
-                <label for="registerEmail">Email :</label>
-                <input type="email" id="registerEmail" placeholder="votre@email.com">
-            </div>
-            
-            <div class="form-group">
-                <label for="registerPassword">Mot de passe :</label>
-                <input type="password" id="registerPassword" placeholder="Min 6 caractères">
-            </div>
-            
-            <button class="btn btn-success" onclick="register()">Créer mon compte</button>
-            <button class="btn btn-secondary" onclick="showLoginForm()">Retour à la connexion</button>
         </div>
-    </div>
-</div>
 
         <!-- PAGE ADMIN -->
         <div class="screen" id="adminScreen">
@@ -544,7 +581,7 @@
             </div>
 
             <!-- TAB VOCABULAIRE -->
-            <div id="adminTabVocabulary" class="admin-tab">
+            <div id="adminTabVocabulary" class="admin-tab active">
                 <div style="background: #e8f5e8; padding: 30px; border-radius: 15px; margin-bottom: 30px; border: 3px solid #28a745;">
                     <h2 style="color: #155724; margin-bottom: 20px;">➕ Ajouter un nouveau mot</h2>
                     
@@ -555,20 +592,21 @@
                     
                     <div class="form-group">
                         <label for="adminDefinition">Définition :</label>
-                        <textarea id="adminDefinition" placeholder="Ex: Division du marché en groupes homogènes" style="min-height: 80px; padding: 12px; border: 2px solid #e1e5e9; border-radius: 8px; width: 100%; font-size: 16px; font-family: inherit;"></textarea>
+                        <textarea id="adminDefinition" placeholder="Ex: Division du marché en groupes homogènes" style="min-height: 80px;"></textarea>
                     </div>
                     
                     <div class="form-group">
                         <label for="adminDifficulty">Difficulté :</label>
-                    <select id="adminDifficulty">
-    <option value="level1">CR 1</option>
-    <option value="level2">CR 2</option>
-    <option value="level3">CR 3</option>
-    <option value="level4">CR 4</option>
-    <option value="level5">CR 5</option>
-    <option value="level6">CR 6</option>
-</select>
-</div>                    
+                        <select id="adminDifficulty">
+                            <option value="level1">CR 1</option>
+                            <option value="level2">CR 2</option>
+                            <option value="level3">CR 3</option>
+                            <option value="level4">CR 4</option>
+                            <option value="level5">CR 5</option>
+                            <option value="level6">CR 6</option>
+                        </select>
+                    </div>
+                    
                     <div class="form-group">
                         <label>Indices pour le mode entraînement (4 indices) :</label>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
@@ -603,13 +641,13 @@
                     <h2 style="color: #333; margin-bottom: 20px;">📚 Liste des mots (<span id="totalWordsCount">0</span>)</h2>
                     
                     <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
-                      <button class="btn btn-secondary" onclick="filterWords('all')" id="filterAll" style="background: #667eea; width: auto;">Tous</button>
-<button class="btn btn-secondary" onclick="filterWords('level1')" id="filterLevel1" style="width: auto;">CR 1</button>
-<button class="btn btn-secondary" onclick="filterWords('level2')" id="filterLevel2" style="width: auto;">CR 2</button>
-<button class="btn btn-secondary" onclick="filterWords('level3')" id="filterLevel3" style="width: auto;">CR 3</button>
-<button class="btn btn-secondary" onclick="filterWords('level4')" id="filterLevel4" style="width: auto;">CR 4</button>
-<button class="btn btn-secondary" onclick="filterWords('level5')" id="filterLevel5" style="width: auto;">CR 5</button>
-<button class="btn btn-secondary" onclick="filterWords('level6')" id="filterLevel6" style="width: auto;">CR 6</button>
+                        <button class="btn btn-secondary" onclick="filterWords('all')" id="filterAll" style="background: #667eea; width: auto;">Tous</button>
+                        <button class="btn btn-secondary" onclick="filterWords('level1')" id="filterLevel1" style="width: auto;">CR 1</button>
+                        <button class="btn btn-secondary" onclick="filterWords('level2')" id="filterLevel2" style="width: auto;">CR 2</button>
+                        <button class="btn btn-secondary" onclick="filterWords('level3')" id="filterLevel3" style="width: auto;">CR 3</button>
+                        <button class="btn btn-secondary" onclick="filterWords('level4')" id="filterLevel4" style="width: auto;">CR 4</button>
+                        <button class="btn btn-secondary" onclick="filterWords('level5')" id="filterLevel5" style="width: auto;">CR 5</button>
+                        <button class="btn btn-secondary" onclick="filterWords('level6')" id="filterLevel6" style="width: auto;">CR 6</button>
                     </div>
 
                     <div id="wordsList" style="max-height: 500px; overflow-y: auto;"></div>
@@ -617,7 +655,7 @@
             </div>
 
             <!-- TAB DICTIONNAIRE -->
-            <div id="adminTabDictionary" class="admin-tab" style="display: none;">
+            <div id="adminTabDictionary" class="admin-tab">
                 <div style="background: #d1ecf1; padding: 30px; border-radius: 15px; border: 3px solid #17a2b8;">
                     <h2 style="color: #0c5460; margin-bottom: 15px;">📖 Dictionnaire Français (<span id="dictionaryCount">0</span> mots autorisés)</h2>
                     <p style="color: #0c5460; margin-bottom: 20px;">
@@ -626,7 +664,7 @@
                     
                     <div class="form-group">
                         <label>Ajouter des mots :</label>
-                        <textarea id="dictionaryWords" placeholder="Ajoutez des mots séparés par des virgules ou des retours à la ligne&#10;Ex: innovation, stratégie, développement" style="width: 100%; min-height: 100px; padding: 12px; border: 2px solid #17a2b8; border-radius: 8px;"></textarea>
+                        <textarea id="dictionaryWords" placeholder="Ajoutez des mots séparés par des virgules ou des retours à la ligne&#10;Ex: innovation, stratégie, développement" style="min-height: 100px;"></textarea>
                     </div>
                     
                     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px;">
@@ -645,7 +683,7 @@
             </div>
 
             <!-- TAB HISTORIQUE -->
-            <div id="adminTabHistory" class="admin-tab" style="display: none;">
+            <div id="adminTabHistory" class="admin-tab">
                 <div style="background: #e7f3ff; padding: 30px; border-radius: 15px; border: 3px solid #007bff;">
                     <h2 style="color: #004085; margin-bottom: 20px;">📊 Historique des parties (<span id="historyCount">0</span>)</h2>
                     
@@ -696,7 +734,6 @@
             </div>
             
             <div style="display: flex; gap: 10px; max-width: 600px; margin: 30px auto 0;">
-                <button class="btn btn-admin" onclick="showAdmin()" style="flex: 1;">🔧 Admin</button>
                 <button class="btn btn-secondary" onclick="logout()" style="flex: 1;">Déconnexion</button>
             </div>
         </div>
@@ -709,14 +746,14 @@
             <div style="max-width: 500px; margin: 0 auto;">
                 <div class="form-group">
                     <label for="trainingDifficulty">Difficulté :</label>
-                  <select id="trainingDifficulty">
-    <option value="level1">CR 1</option>
-    <option value="level2">CR 2</option>
-    <option value="level3" selected>CR 3</option>
-    <option value="level4">CR 4</option>
-    <option value="level5">CR 5</option>
-    <option value="level6">CR 6</option>
-</select>
+                    <select id="trainingDifficulty">
+                        <option value="level1">CR 1</option>
+                        <option value="level2">CR 2</option>
+                        <option value="level3" selected>CR 3</option>
+                        <option value="level4">CR 4</option>
+                        <option value="level5">CR 5</option>
+                        <option value="level6">CR 6</option>
+                    </select>
                 </div>
                 
                 <div class="form-group">
@@ -739,17 +776,18 @@
             <h1 class="page-title">🏠 Salle Privée</h1>
             
             <div style="max-width: 500px; margin: 0 auto;">
-                  <div class="form-group">
-            <label for="privateRoomDifficulty">Niveau de difficulté :</label>
-            <select id="privateRoomDifficulty">
-                <option value="level1">CR 1</option>
-                <option value="level2">CR 2</option>
-                <option value="level3" selected>CR 3</option>
-                <option value="level4">CR 4</option>
-                <option value="level5">CR 5</option>
-                <option value="level6">CR 6</option>
-            </select>
-        </div>
+                <div class="form-group">
+                    <label for="privateRoomDifficulty">Niveau de difficulté :</label>
+                    <select id="privateRoomDifficulty">
+                        <option value="level1">CR 1</option>
+                        <option value="level2">CR 2</option>
+                        <option value="level3" selected>CR 3</option>
+                        <option value="level4">CR 4</option>
+                        <option value="level5">CR 5</option>
+                        <option value="level6">CR 6</option>
+                    </select>
+                </div>
+
                 <div class="mode-grid" style="grid-template-columns: 1fr;">
                     <div class="mode-card" onclick="createPrivateRoom()">
                         <div class="mode-icon">➕</div>
@@ -932,123 +970,165 @@
         }
 
         // === AUTHENTIFICATION ===
-       // === AUTHENTIFICATION ===
-function showLoginForm() {
-    document.getElementById('loginForm').style.display = 'block';
-    document.getElementById('registerForm').style.display = 'none';
-}
-
-function showRegisterForm() {
-    document.getElementById('loginForm').style.display = 'none';
-    document.getElementById('registerForm').style.display = 'block';
-}
-
-function login() {
-    const userName = document.getElementById('loginUserName').value.trim();
-    const password = document.getElementById('loginPassword').value.trim();
-    
-    if (!userName || !password) {
-        showMessage('error', 'Pseudo et mot de passe requis');
-        return;
-    }
-    
-    fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pseudo: userName, password })
-    })
-    .then(res => {
-        if (!res.ok) {
-            throw new Error('Erreur serveur (code ' + res.status + ')');
+        function showLoginForm() {
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('forgotPasswordForm').style.display = 'none';
         }
-        return res.json();
-    })
-    .then(data => {
-        if (data.success) {
-            currentUser = data.user.pseudo;
-            currentUserData = data.user;
-            saveSession();
+
+        function showRegisterForm() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+            document.getElementById('forgotPasswordForm').style.display = 'none';
+        }
+
+        function showForgotPasswordForm() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('forgotPasswordForm').style.display = 'block';
+        }
+
+        function login() {
+            const userName = document.getElementById('loginUserName').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
             
-            document.getElementById('playerName').textContent = currentUser;
-            document.getElementById('playerScore').textContent = data.user.totalScore || 0;
-            showScreen('modeScreen');
-            showMessage('success', 'Connexion réussie !');
-            
-            if (!socket || !socket.connected) {
-                initSocket();
+            if (!userName || !password) {
+                showMessage('error', 'Pseudo et mot de passe requis');
+                return;
             }
-        } else {
-            showMessage('error', data.message || 'Identifiants incorrects');
+            
+            fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ pseudo: userName, password })
+            })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error('Erreur serveur (code ' + res.status + ')');
+                }
+                return res.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    currentUser = data.user.pseudo;
+                    currentUserData = data.user;
+                    saveSession();
+                    
+                    document.getElementById('playerName').textContent = currentUser;
+                    document.getElementById('playerScore').textContent = data.user.totalScore || 0;
+                    showScreen('modeScreen');
+                    showMessage('success', 'Connexion réussie !');
+                    
+                    if (!socket || !socket.connected) {
+                        initSocket();
+                    }
+                } else {
+                    showMessage('error', data.message || 'Identifiants incorrects');
+                }
+            })
+            .catch(err => {
+                console.error('Erreur login:', err);
+                showMessage('error', 'Impossible de se connecter au serveur');
+            });
         }
-    })
-    .catch(err => {
-        console.error('Erreur login:', err);
-        showMessage('error', 'Impossible de se connecter au serveur');
-    });
-}
 
-function register() {
-    const userName = document.getElementById('registerUserName').value.trim();
-    const userEmail = document.getElementById('registerEmail').value.trim();
-    const password = document.getElementById('registerPassword').value.trim();
-    
-    if (!userName || !password || !userEmail) {
-        showMessage('error', 'Tous les champs sont obligatoires');
-        return;
-    }
-    
-    if (userName.length < 3) {
-        showMessage('error', 'Le pseudo doit contenir au moins 3 caractères');
-        return;
-    }
-    
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(userEmail)) {
-        showMessage('error', 'Email invalide');
-        return;
-    }
-    
-    if (password.length < 6) {
-        showMessage('error', 'Mot de passe trop court (min 6 caractères)');
-        return;
-    }
-    
-    fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-            pseudo: userName, 
-            email: userEmail, 
-            password: password 
-        })
-    })
-    .then(res => {
-        if (!res.ok) {
-            throw new Error('Erreur serveur (code ' + res.status + ')');
-        }
-        return res.json();
-    })
-    .then(data => {
-        if (data.success) {
-            showMessage('success', 'Compte créé ! Vous pouvez maintenant vous connecter');
+        function register() {
+            const userName = document.getElementById('registerUserName').value.trim();
+            const userEmail = document.getElementById('registerEmail').value.trim();
+            const password = document.getElementById('registerPassword').value.trim();
             
-            // Pré-remplir le formulaire de connexion
-            document.getElementById('loginUserName').value = userName;
-            document.getElementById('loginPassword').value = password;
+            if (!userName || !password || !userEmail) {
+                showMessage('error', 'Tous les champs sont obligatoires');
+                return;
+            }
             
-            // Retour au formulaire de connexion
-            setTimeout(() => {
-                showLoginForm();
-            }, 1500);
-        } else {
-            showMessage('error', data.message || 'Erreur lors de la création du compte');
+            if (userName.length < 3) {
+                showMessage('error', 'Le pseudo doit contenir au moins 3 caractères');
+                return;
+            }
+            
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(userEmail)) {
+                showMessage('error', 'Email invalide');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showMessage('error', 'Mot de passe trop court (min 6 caractères)');
+                return;
+            }
+            
+            fetch('/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    pseudo: userName, 
+                    email: userEmail, 
+                    password: password 
+                })
+            })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error('Erreur serveur (code ' + res.status + ')');
+                }
+                return res.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    showMessage('success', 'Compte créé ! Vous pouvez maintenant vous connecter');
+                    
+                    document.getElementById('loginUserName').value = userName;
+                    document.getElementById('loginPassword').value = password;
+                    
+                    setTimeout(() => {
+                        showLoginForm();
+                    }, 1500);
+                } else {
+                    showMessage('error', data.message || 'Erreur lors de la création du compte');
+                }
+            })
+            .catch(err => {
+                console.error('Erreur register:', err);
+                showMessage('error', 'Impossible de se connecter au serveur');
+            });
         }
-    })
-    .catch(err => {
-        console.error('Erreur register:', err);
-        showMessage('error', 'Impossible de se connecter au serveur');
-    });
-}
+
+        function sendResetPassword() {
+            const email = document.getElementById('forgotEmail').value.trim();
+            
+            if (!email) {
+                showMessage('error', 'Veuillez entrer votre email');
+                return;
+            }
+            
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showMessage('error', 'Email invalide');
+                return;
+            }
+            
+            fetch('/api/auth/reset-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage('success', 'Un nouveau mot de passe a été envoyé par email');
+                    setTimeout(() => {
+                        showLoginForm();
+                        document.getElementById('forgotEmail').value = '';
+                    }, 2000);
+                } else {
+                    showMessage('error', data.message || 'Email introuvable');
+                }
+            })
+            .catch(err => {
+                console.error('Erreur reset password:', err);
+                showMessage('error', 'Erreur serveur');
+            });
+        }
 
         function logout() {
             if (socket) socket.disconnect();
@@ -1056,11 +1136,11 @@ function register() {
             currentUserData = null;
             clearSession();
             
-            document.getElementById('userName').value = '';
-            document.getElementById('userEmail').value = '';
-            document.getElementById('userPassword').value = '';
+            document.getElementById('loginUserName').value = '';
+            document.getElementById('loginPassword').value = '';
             
             showScreen('loginScreen');
+            showLoginForm();
             initSocket();
         }
 
@@ -1219,14 +1299,6 @@ function register() {
             setTimeout(() => div.remove(), 3000);
         }
 
-        function showAdminButton() {
-            if (!currentUser) {
-                showMessage('error', 'Connectez-vous d\'abord avec un compte admin');
-                return;
-            }
-            showAdmin();
-        }
-
         function showAdmin() {
             if (!currentUser) {
                 showMessage('error', 'Vous devez être connecté');
@@ -1257,8 +1329,8 @@ function register() {
         }
 
         function showAdminTab(tabName) {
-            document.querySelectorAll('.admin-tab').forEach(tab => tab.style.display = 'none');
-            document.getElementById('adminTab' + tabName.charAt(0).toUpperCase() + tabName.slice(1)).style.display = 'block';
+            document.querySelectorAll('.admin-tab').forEach(tab => tab.classList.remove('active'));
+            document.getElementById('adminTab' + tabName.charAt(0).toUpperCase() + tabName.slice(1)).classList.add('active');
             
             document.querySelectorAll('[id^="tab"]').forEach(btn => btn.className = 'btn btn-secondary');
             const btnId = 'tab' + tabName.charAt(0).toUpperCase() + tabName.slice(1).substring(0, tabName === 'vocabulary' ? 5 : tabName === 'dictionary' ? 4 : 7);
@@ -1286,21 +1358,21 @@ function register() {
             const wordsList = document.getElementById('wordsList');
             let allWords = [];
             
-['level1', 'level2', 'level3', 'level4', 'level5', 'level6'].forEach(difficulty => {
-    if (currentFilter === 'all' || currentFilter === difficulty) {
+            ['level1', 'level2', 'level3', 'level4', 'level5', 'level6'].forEach(difficulty => {
+                if (currentFilter === 'all' || currentFilter === difficulty) {
                     (vocabularyData[difficulty] || []).forEach((word, index) => {
                         allWords.push({ ...word, difficulty, originalIndex: index });
                     });
                 }
             });
 
-           document.getElementById('totalWordsCount').textContent = 
-    (vocabularyData.level1?.length || 0) + 
-    (vocabularyData.level2?.length || 0) + 
-    (vocabularyData.level3?.length || 0) + 
-    (vocabularyData.level4?.length || 0) + 
-    (vocabularyData.level5?.length || 0) + 
-    (vocabularyData.level6?.length || 0);
+            document.getElementById('totalWordsCount').textContent = 
+                (vocabularyData.level1?.length || 0) + 
+                (vocabularyData.level2?.length || 0) + 
+                (vocabularyData.level3?.length || 0) + 
+                (vocabularyData.level4?.length || 0) + 
+                (vocabularyData.level5?.length || 0) + 
+                (vocabularyData.level6?.length || 0);
 
             if (allWords.length === 0) {
                 wordsList.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">Aucun mot</p>';
@@ -1312,13 +1384,13 @@ function register() {
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                         <strong style="font-size: 20px;">${word.word}</strong>
                         <span style="background: ${
-    word.difficulty === 'level1' ? '#28a745' : 
-    word.difficulty === 'level2' ? '#20c997' : 
-    word.difficulty === 'level3' ? '#17a2b8' : 
-    word.difficulty === 'level4' ? '#ffc107' : 
-    word.difficulty === 'level5' ? '#fd7e14' : 
-    '#dc3545'
-}; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: bold;">${word.difficulty.toUpperCase()}</span>
+                            word.difficulty === 'level1' ? '#28a745' : 
+                            word.difficulty === 'level2' ? '#20c997' : 
+                            word.difficulty === 'level3' ? '#17a2b8' : 
+                            word.difficulty === 'level4' ? '#ffc107' : 
+                            word.difficulty === 'level5' ? '#fd7e14' : 
+                            '#dc3545'
+                        }; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: bold;">${word.difficulty.toUpperCase()}</span>
                     </div>
                     <div style="color: #666; margin-bottom: 15px;">${word.definition}</div>
                     ${word.botClues && word.botClues.length > 0 ? `
@@ -1344,11 +1416,12 @@ function register() {
 
         function filterWords(filter) {
             currentFilter = filter;
-['filterAll', 'filterLevel1', 'filterLevel2', 'filterLevel3', 'filterLevel4', 'filterLevel5', 'filterLevel6'].forEach(id => {                const btn = document.getElementById(id);
+            ['filterAll', 'filterLevel1', 'filterLevel2', 'filterLevel3', 'filterLevel4', 'filterLevel5', 'filterLevel6'].forEach(id => {
+                const btn = document.getElementById(id);
                 if (btn) {
                     const isActive = (id === 'filterAll' && filter === 'all') || 
-                 id === 'filter' + filter.charAt(0).toUpperCase() + filter.slice(1);
-btn.style.background = isActive ? '#667eea' : 'linear-gradient(135deg, #6c757d 0%, #495057 100%)';
+                                   id === 'filter' + filter.charAt(0).toUpperCase() + filter.slice(1);
+                    btn.style.background = isActive ? '#667eea' : 'linear-gradient(135deg, #6c757d 0%, #495057 100%)';
                 }
             });
             displayWords();
@@ -1494,7 +1567,7 @@ btn.style.background = isActive ? '#667eea' : 'linear-gradient(135deg, #6c757d 0
             fetch('/api/dictionary/add', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ words })
+                body: JSON.stringify({ words, adminPseudo: currentUser })
             })
             .then(res => res.json())
             .then(data => {
@@ -1552,7 +1625,7 @@ btn.style.background = isActive ? '#667eea' : 'linear-gradient(135deg, #6c757d 0
                     fetch('/api/dictionary/import', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ words })
+                        body: JSON.stringify({ words, adminPseudo: currentUser })
                     })
                     .then(res => res.json())
                     .then(data => {
@@ -1593,17 +1666,17 @@ btn.style.background = isActive ? '#667eea' : 'linear-gradient(135deg, #6c757d 0
                 <div style="background: white; padding: 20px; border-radius: 10px; margin-bottom: 15px; border: 2px solid #e1e5e9;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                         <strong style="font-size: 18px;">#${history.length - index} - ${game.type === 'training' ? '🤖 Entraînement' : '⚡ Multijoueur'}</strong>
-                        <span style="color: #999; font-size: 14px;">${new Date(game.timestamp).toLocaleString('fr-FR')}</span>
+                        <span style="color: #999; font-size: 14px;">${new Date(game.timestamp || game.created_at).toLocaleString('fr-FR')}</span>
                     </div>
                     ${game.type === 'training' ? `
                         <div>Joueur: <strong>${game.player}</strong></div>
                         <div>Difficulté: <strong>${game.difficulty}</strong></div>
-                        <div>Score: <strong>${game.finalScore} pts</strong></div>
-                        <div>Mots trouvés: <strong>${game.wordsGuessed}</strong></div>
+                        <div>Score: <strong>${game.finalScore || game.final_scores} pts</strong></div>
+                        <div>Mots trouvés: <strong>${game.wordsGuessed || game.words_played}</strong></div>
                     ` : `
                         <div>Joueurs: <strong>${game.players ? game.players.join(' vs ') : 'N/A'}</strong></div>
-                        <div>Scores: <strong>${game.finalScores ? Object.entries(game.finalScores).map(([p, s]) => `${p}: ${s}`).join(' | ') : 'N/A'}</strong></div>
-                        <div>Mots joués: <strong>${game.wordsPlayed}</strong></div>
+                        <div>Scores: <strong>${game.finalScores || game.final_scores ? Object.entries(game.finalScores || JSON.parse(game.final_scores || '{}')).map(([p, s]) => `${p}: ${s}`).join(' | ') : 'N/A'}</strong></div>
+                        <div>Mots joués: <strong>${game.wordsPlayed || game.words_played}</strong></div>
                     `}
                 </div>
             `).join('');
@@ -1628,33 +1701,34 @@ btn.style.background = isActive ? '#667eea' : 'linear-gradient(135deg, #6c757d 0
         function convertHistoryToCSV(history) {
             const headers = 'Date,Type,Joueurs,Scores,Mots\n';
             const rows = history.map(g => {
-                const date = new Date(g.timestamp).toLocaleString('fr-FR');
+                const date = new Date(g.timestamp || g.created_at).toLocaleString('fr-FR');
                 const type = g.type === 'training' ? 'Entraînement' : 'Multijoueur';
                 const players = g.type === 'training' ? g.player : (g.players || []).join(' vs ');
-                const scores = g.type === 'training' ? g.finalScore : Object.values(g.finalScores || {}).join('-');
-                const words = g.wordsGuessed || g.wordsPlayed || 0;
+                const scores = g.type === 'training' ? (g.finalScore || g.final_scores) : Object.values(JSON.parse(g.final_scores || '{}')).join('-');
+                const words = g.wordsGuessed || g.words_played || 0;
                 return `"${date}","${type}","${players}","${scores}","${words}"`;
             }).join('\n');
             return headers + rows;
         }
 
         // === MODES DE JEU ===
-     function startMatchmaking() {
-    if (!socket || !socket.connected) {
-        showMessage('error', 'Connexion au serveur perdue. Reconnexion...');
-        initSocket();
-        setTimeout(() => startMatchmaking(), 1000);
-        return;
-    }
-    
-    if (!currentUser) {
-        showMessage('error', 'Vous devez être connecté');
-        return;
-    }
-    
-    console.log('Démarrage du matchmaking pour:', currentUser);
-    socket.emit('join_matchmaking', { pseudo: currentUser });
-}
+        function startMatchmaking() {
+            if (!socket || !socket.connected) {
+                showMessage('error', 'Connexion au serveur perdue. Reconnexion...');
+                initSocket();
+                setTimeout(() => startMatchmaking(), 1000);
+                return;
+            }
+            
+            if (!currentUser) {
+                showMessage('error', 'Vous devez être connecté');
+                return;
+            }
+            
+            console.log('Démarrage du matchmaking pour:', currentUser);
+            socket.emit('join_matchmaking', { pseudo: currentUser });
+        }
+
         function cancelMatchmaking() {
             socket.emit('leave_matchmaking');
         }
@@ -1873,53 +1947,78 @@ btn.style.background = isActive ? '#667eea' : 'linear-gradient(135deg, #6c757d 0
         }
 
         // === INITIALISATION ===
-       // === INITIALISATION ===
-document.addEventListener('DOMContentLoaded', function() {
-    if (loadSession()) {
-        document.getElementById('playerName').textContent = currentUser;
-        document.getElementById('playerScore').textContent = currentUserData.totalScore || 0;
-        showScreen('modeScreen');
-        initSocket();
-    } else {
-        showScreen('loginScreen');
-        showLoginForm(); // Afficher le formulaire de connexion par défaut
-        initSocket();
-    }
-    
-    // Event listeners pour la connexion
-    document.getElementById('loginUserName').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') login();
-    });
-    
-    document.getElementById('loginPassword').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') login();
-    });
-    
-    // Event listeners pour l'inscription
-    document.getElementById('registerUserName').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') document.getElementById('registerEmail').focus();
-    });
-    
-    document.getElementById('registerEmail').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') document.getElementById('registerPassword').focus();
-    });
-    
-    document.getElementById('registerPassword').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') register();
-    });
-    
-    // Event listeners pour le jeu
-    document.getElementById('gameInput').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') sendInput();
-    });
-    
-    document.getElementById('roomCodeInput').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') joinPrivateRoom();
-    });
-});
+        document.addEventListener('DOMContentLoaded', function() {
+            if (loadSession()) {
+                document.getElementById('playerName').textContent = currentUser;
+                document.getElementById('playerScore').textContent = currentUserData.totalScore || 0;
+                showScreen('modeScreen');
+                initSocket();
+            } else {
+                showScreen('loginScreen');
+                showLoginForm();
+                initSocket();
+            }
+            
+            // Event listeners pour la connexion
+            document.getElementById('loginUserName').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    document.getElementById('loginPassword').focus();
+                }
+            });
+            
+            document.getElementById('loginPassword').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    login();
+                }
+            });
+            
+            // Event listeners pour l'inscription
+            document.getElementById('registerUserName').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    document.getElementById('registerEmail').focus();
+                }
+            });
+            
+            document.getElementById('registerEmail').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    document.getElementById('registerPassword').focus();
+                }
+            });
+            
+            document.getElementById('registerPassword').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    register();
+                }
+            });
+            
+            // Event listener pour mot de passe oublié
+            document.getElementById('forgotEmail').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    sendResetPassword();
+                }
+            });
+            
+            // Event listeners pour le jeu
+            document.getElementById('gameInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    sendInput();
+                }
+            });
+            
+            document.getElementById('roomCodeInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    joinPrivateRoom();
+                }
+            });
+        });
     </script>
 </body>
 </html>
-
-
-
