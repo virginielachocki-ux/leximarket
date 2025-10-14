@@ -3,56 +3,31 @@
     {
       "word": "MARQUE",
       "definition": "Nom commercial d'un produit",
-      "botClues": [
-        "logo",
-        "nom",
-        "entreprise",
-        "identité"
-      ],
+      "botClues": ["logo", "nom", "entreprise", "identité"],
       "forbiddenWords": []
     },
     {
       "word": "PRIX",
       "definition": "Valeur monétaire",
-      "botClues": [
-        "coût",
-        "euros",
-        "argent",
-        "tarif"
-      ],
+      "botClues": ["coût", "euros", "argent", "tarif"],
       "forbiddenWords": []
     },
     {
       "word": "CLIENT",
       "definition": "Personne qui achète",
-      "botClues": [
-        "acheteur",
-        "consommateur",
-        "personne",
-        "magasin"
-      ],
+      "botClues": ["acheteur", "consommateur", "personne", "magasin"],
       "forbiddenWords": []
     },
     {
       "word": "VENTE",
       "definition": "Action de vendre",
-      "botClues": [
-        "commerce",
-        "transaction",
-        "échanger",
-        "vendeur"
-      ],
+      "botClues": ["commerce", "transaction", "échanger", "vendeur"],
       "forbiddenWords": []
     },
     {
       "word": "PRODUIT",
       "definition": "Bien ou service",
-      "botClues": [
-        "objet",
-        "marchandise",
-        "bien",
-        "article"
-      ],
+      "botClues": ["objet", "marchandise", "bien", "article"],
       "forbiddenWords": []
     }
   ],
@@ -60,58 +35,31 @@
     {
       "word": "SEGMENTATION",
       "definition": "Division du marché",
-      "botClues": [
-        "diviser",
-        "groupes",
-        "cibler",
-        "catégories"
-      ],
-      "forbiddenWords": [
-        "segment"
-      ]
+      "botClues": ["diviser", "groupes", "cibler", "catégories"],
+      "forbiddenWords": ["segment"]
     },
     {
       "word": "POSITIONNEMENT",
       "definition": "Place du produit",
-      "botClues": [
-        "image",
-        "perception",
-        "concurrence",
-        "stratégie"
-      ],
+      "botClues": ["image", "perception", "concurrence", "stratégie"],
       "forbiddenWords": []
     },
     {
       "word": "MERCHANDISING",
       "definition": "Présentation des produits",
-      "botClues": [
-        "vitrine",
-        "disposition",
-        "présentation",
-        "magasin"
-      ],
+      "botClues": ["vitrine", "disposition", "présentation", "magasin"],
       "forbiddenWords": []
     },
     {
       "word": "FIDELISATION",
       "definition": "Fidéliser la clientèle",
-      "botClues": [
-        "garder",
-        "clients",
-        "fidèles",
-        "relation"
-      ],
+      "botClues": ["garder", "clients", "fidèles", "relation"],
       "forbiddenWords": []
     },
     {
       "word": "FRANCHISE",
       "definition": "Contrat de distribution",
-      "botClues": [
-        "réseau",
-        "enseigne",
-        "contrat",
-        "commerce"
-      ],
+      "botClues": ["réseau", "enseigne", "contrat", "commerce"],
       "forbiddenWords": []
     }
   ],
@@ -119,46 +67,29 @@
     {
       "word": "OMNICANALITE",
       "definition": "Stratégie multicanale",
-      "botClues": [
-        "canaux",
-        "intégration",
-        "cohérence",
-        "stratégie"
-      ],
+      "botClues": ["canaux", "intégration", "cohérence", "stratégie"],
       "forbiddenWords": []
     },
     {
       "word": "NEUROMARKETING",
       "definition": "Neurosciences et marketing",
-      "botClues": [
-        "cerveau",
-        "neurones",
-        "psychologie",
-        "étudier"
-      ],
+      "botClues": ["cerveau", "neurones", "psychologie", "étudier"],
       "forbiddenWords": []
     },
     {
       "word": "RETARGETING",
       "definition": "Reciblage publicitaire",
-      "botClues": [
-        "publicité",
-        "internet",
-        "recibler",
-        "stratégie"
-      ],
+      "botClues": ["publicité", "internet", "recibler", "stratégie"],
       "forbiddenWords": []
     },
     {
       "word": "STORYTELLING",
       "definition": "Technique narrative",
-      "botClues": [
-        "histoire",
-        "récit",
-        "narration",
-        "communication"
-      ],
+      "botClues": ["histoire", "récit", "narration", "communication"],
       "forbiddenWords": []
     }
-  ]
+  ],
+  "level4": [],
+  "level5": [],
+  "level6": []
 }
