@@ -536,12 +536,14 @@
                     
                     <div class="form-group">
                         <label for="adminDifficulty">Difficulté :</label>
-                        <select id="adminDifficulty">
-                            <option value="easy">Facile</option>
-                            <option value="medium">Moyen</option>
-                            <option value="hard">Difficile</option>
-                        </select>
-                    </div>
+                    <select id="adminDifficulty">
+    <option value="level1">CR 1</option>
+    <option value="level2">CR 2</option>
+    <option value="level3">CR 3</option>
+    <option value="level4">CR 4</option>
+    <option value="level5">CR 5</option>
+    <option value="level6">CR 6</option>
+</select>
                     
                     <div class="form-group">
                         <label>Indices pour le mode entraînement (4 indices) :</label>
@@ -577,10 +579,13 @@
                     <h2 style="color: #333; margin-bottom: 20px;">📚 Liste des mots (<span id="totalWordsCount">0</span>)</h2>
                     
                     <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
-                        <button class="btn btn-secondary" onclick="filterWords('all')" id="filterAll" style="background: #667eea; width: auto;">Tous</button>
-                        <button class="btn btn-secondary" onclick="filterWords('easy')" id="filterEasy" style="width: auto;">Faciles</button>
-                        <button class="btn btn-secondary" onclick="filterWords('medium')" id="filterMedium" style="width: auto;">Moyens</button>
-                        <button class="btn btn-secondary" onclick="filterWords('hard')" id="filterHard" style="width: auto;">Difficiles</button>
+                      <button class="btn btn-secondary" onclick="filterWords('all')" id="filterAll" style="background: #667eea; width: auto;">Tous</button>
+<button class="btn btn-secondary" onclick="filterWords('level1')" id="filterLevel1" style="width: auto;">CR 1</button>
+<button class="btn btn-secondary" onclick="filterWords('level2')" id="filterLevel2" style="width: auto;">CR 2</button>
+<button class="btn btn-secondary" onclick="filterWords('level3')" id="filterLevel3" style="width: auto;">CR 3</button>
+<button class="btn btn-secondary" onclick="filterWords('level4')" id="filterLevel4" style="width: auto;">CR 4</button>
+<button class="btn btn-secondary" onclick="filterWords('level5')" id="filterLevel5" style="width: auto;">CR 5</button>
+<button class="btn btn-secondary" onclick="filterWords('level6')" id="filterLevel6" style="width: auto;">CR 6</button>
                     </div>
 
                     <div id="wordsList" style="max-height: 500px; overflow-y: auto;"></div>
@@ -680,11 +685,14 @@
             <div style="max-width: 500px; margin: 0 auto;">
                 <div class="form-group">
                     <label for="trainingDifficulty">Difficulté :</label>
-                    <select id="trainingDifficulty">
-                        <option value="easy">Facile</option>
-                        <option value="medium">Moyen</option>
-                        <option value="hard">Difficile</option>
-                    </select>
+                  <select id="trainingDifficulty">
+    <option value="level1">CR 1</option>
+    <option value="level2">CR 2</option>
+    <option value="level3" selected>CR 3</option>
+    <option value="level4">CR 4</option>
+    <option value="level5">CR 5</option>
+    <option value="level6">CR 6</option>
+</select>
                 </div>
                 
                 <div class="form-group">
@@ -707,6 +715,17 @@
             <h1 class="page-title">🏠 Salle Privée</h1>
             
             <div style="max-width: 500px; margin: 0 auto;">
+                  <div class="form-group">
+            <label for="privateRoomDifficulty">Niveau de difficulté :</label>
+            <select id="privateRoomDifficulty">
+                <option value="level1">CR 1</option>
+                <option value="level2">CR 2</option>
+                <option value="level3" selected>CR 3</option>
+                <option value="level4">CR 4</option>
+                <option value="level5">CR 5</option>
+                <option value="level6">CR 6</option>
+            </select>
+        </div>
                 <div class="mode-grid" style="grid-template-columns: 1fr;">
                     <div class="mode-card" onclick="createPrivateRoom()">
                         <div class="mode-icon">➕</div>
@@ -1823,3 +1842,4 @@
     </script>
 </body>
 </html>
+
