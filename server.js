@@ -552,32 +552,45 @@ socket.on('join_matchmaking', () => {
     }, 1000);
   });
   
-  socket.on('join_room', (code) => {
-    const room = activeRooms.get(code);
-    if (!room || room.type === 'training') return;
-    socket.join(code);
-    if (room.gameState === 'starting') {
-      room.gameState = 'playing';
-      room.currentWord = getRandomWord();
-      room.startTime = Date.now();
-      room.players.forEach((p, i) => {
-const isGiver = (i + 1) === room.currentGuesser; 
-        io.to(p.socketId).emit('game_start', {
-          word: room.currentWord, players: room.players.map(p => p.pseudo),
-          yourRole: isGiver ? 'giver' : 'guesser', roundNumber: 1, maxWords: 4,
-          scores: room.scores, clues: [], turnsLeft: 4, timeLeft: 60
-        });
+ socket.on('join_room', (code) => {
+  const room = activeRooms.get(code);
+  if (!room || room.type === 'training') return;
+  
+  socket.join(code);
+  
+  if (room.gameState === 'starting') {
+    room.gameState = 'playing';
+    room.startTime = Date.now(); // 
+    
+    room.players.forEach((p, playerIndex) => {
+      const isGuesser = playerIndex === room.currentGuesser;
+      
+      console.log(`📤 Envoi game_start à ${p.pseudo} (index ${playerIndex}) → Rôle : ${isGuesser ? 'DEVINEUR' : 'DONNEUR'}`);
+      
+      io.to(p.socketId).emit('game_start', {
+        word: room.currentWord,
+        players: room.players.map(p => p.pseudo),
+        yourRole: isGuesser ? 'guesser' : 'giver', 
+        roundNumber: room.wordsPlayed,
+        maxWords: room.maxWords,
+        scores: room.scores,
+        clues: [],
+        turnsLeft: 4,
+        timeLeft: 60
       });
-      room.timer = setInterval(() => {
-        room.timeLeft--;
-        io.to(code).emit('timer_update', room.timeLeft);
-        if (room.timeLeft <= 0) {
-          clearInterval(room.timer);
-          endRound(code, false, "Temps écoulé");
-        }
-      }, 1000);
-    }
-  });
+    });
+    
+    // Démarrer le timer
+    room.timer = setInterval(() => {
+      room.timeLeft--;
+      io.to(code).emit('timer_update', room.timeLeft);
+      if (room.timeLeft <= 0) {
+        clearInterval(room.timer);
+        endRound(code, false, "Temps écoulé");
+      }
+    }, 1000);
+  }
+});
   
   socket.on('give_clue', (data) => {
     const room = activeRooms.get(data.roomCode);
@@ -616,10 +629,25 @@ const isGiver = (i + 1) === room.currentGuesser;
 });
 
 function createMultiplayerRoom(code, players, type) {
+  const firstWord = getRandomWord(); // ✅ AJOUT : Générer le premier mot immédiatement
+  
   activeRooms.set(code, {
-    type, players, gameState: 'starting', clues: [], turnsLeft: 4, timeLeft: 60, currentGuesser: 1,
-    scores: { [players[0].pseudo]: 0, [players[1].pseudo]: 0 }, wordsPlayed: 1, maxWords: 4
+    type, 
+    players, 
+    gameState: 'starting', 
+    currentWord: firstWord, // ✅ AJOUT : Définir le mot dès la création
+    clues: [], 
+    turnsLeft: 4, 
+    timeLeft: 60, 
+    currentGuesser: 0, // ✅ CHANGEMENT : Index 0 = premier joueur devine, index 1 donne
+    scores: { [players[0].pseudo]: 0, [players[1].pseudo]: 0 }, 
+    wordsPlayed: 1, 
+    maxWords: 4,
+    startTime: null // ✅ AJOUT : Sera défini au démarrage réel
   });
+  
+  console.log(`🎮 Salle créée : ${code} | Joueurs : ${players[0].pseudo} vs ${players[1].pseudo}`);
+  console.log(`   Premier mot : ${firstWord.word} | Devineur : ${players[0].pseudo}`);
 }
 
 function giveBotClue(code) {
@@ -707,41 +735,51 @@ async function endRound(code, success, message) {
       activeRooms.delete(code);
     }, 5000);
   } else {
-    setTimeout(() => {
-      if (activeRooms.has(code)) {
-        room.wordsPlayed++;
-        room.currentWord = getRandomWord();
-        room.clues = [];
-        room.turnsLeft = 4;
-        room.timeLeft = 60;
-        room.currentGuesser = room.currentGuesser === 1 ? 2 : 1;
-        room.startTime = Date.now();
-        room.players.forEach((p, i) => {
-          const isGiver = (i + 1) === room.currentGuesser;
-          io.to(p.socketId).emit('next_round', {
-            word: room.currentWord, yourRole: isGiver ? 'giver' : 'guesser', roundNumber: room.wordsPlayed,
-            maxWords: room.maxWords, players: room.players.map(p => p.pseudo), scores: room.scores,
-            clues: [], turnsLeft: 4, timeLeft: 60
-          });
-        });
-        room.timer = setInterval(() => {
-          room.timeLeft--;
-          io.to(code).emit('timer_update', room.timeLeft);
-          if (room.timeLeft <= 0) {
-            clearInterval(room.timer);
-            endRound(code, false, "Temps écoulé");
-          }
-        }, 1000);
+setTimeout(() => {
+  if (activeRooms.has(code)) {
+    room.wordsPlayed++;
+    room.currentWord = getRandomWord();
+    room.clues = [];
+    room.turnsLeft = 4;
+    room.timeLeft = 60;
+    room.currentGuesser = room.currentGuesser === 0 ? 1 : 0;
+    room.startTime = Date.now();
+    
+    console.log(`🔄 Manche ${room.wordsPlayed}/${room.maxWords} | Mot : ${room.currentWord.word} | Devineur : ${room.players[room.currentGuesser].pseudo}`);
+    
+    room.players.forEach((p, playerIndex) => {
+      const isGuesser = playerIndex === room.currentGuesser;
+      
+      io.to(p.socketId).emit('next_round', {
+        word: room.currentWord,
+        yourRole: isGuesser ? 'guesser' : 'giver',
+        roundNumber: room.wordsPlayed,
+        maxWords: room.maxWords,
+        players: room.players.map(p => p.pseudo),
+        scores: room.scores,
+        clues: [],
+        turnsLeft: 4,
+        timeLeft: 60
+      });
+    });
+    
+    room.timer = setInterval(() => {
+      room.timeLeft--;
+      io.to(code).emit('timer_update', room.timeLeft);
+      if (room.timeLeft <= 0) {
+        clearInterval(room.timer);
+        endRound(code, false, "Temps écoulé");
       }
-    }, 5000);
+    }, 1000);
   }
-}
+}, 5000);
 
 server.listen(PORT, () => {
   console.log(`🎯 LexiMarket sur le port ${PORT}`);
   console.log(`📚 ${marketingVocabulary.level1.length + marketingVocabulary.level2.length + marketingVocabulary.level3.length + marketingVocabulary.level4.length + marketingVocabulary.level5.length + marketingVocabulary.level6.length} mots`);
   console.log(`📖 ${frenchDictionary.size} mots autorisés`);
 });
+
 
 
 
