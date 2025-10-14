@@ -561,7 +561,7 @@ socket.on('join_matchmaking', () => {
       room.currentWord = getRandomWord();
       room.startTime = Date.now();
       room.players.forEach((p, i) => {
-        const isGiver = (i + 1) !== room.currentGuesser;
+const isGiver = (i + 1) === room.currentGuesser; 
         io.to(p.socketId).emit('game_start', {
           word: room.currentWord, players: room.players.map(p => p.pseudo),
           yourRole: isGiver ? 'giver' : 'guesser', roundNumber: 1, maxWords: 4,
@@ -717,7 +717,7 @@ async function endRound(code, success, message) {
         room.currentGuesser = room.currentGuesser === 1 ? 2 : 1;
         room.startTime = Date.now();
         room.players.forEach((p, i) => {
-          const isGiver = (i + 1) !== room.currentGuesser;
+          const isGiver = (i + 1) === room.currentGuesser;
           io.to(p.socketId).emit('next_round', {
             word: room.currentWord, yourRole: isGiver ? 'giver' : 'guesser', roundNumber: room.wordsPlayed,
             maxWords: room.maxWords, players: room.players.map(p => p.pseudo), scores: room.scores,
@@ -742,6 +742,7 @@ server.listen(PORT, () => {
   console.log(`📚 ${marketingVocabulary.level1.length + marketingVocabulary.level2.length + marketingVocabulary.level3.length + marketingVocabulary.level4.length + marketingVocabulary.level5.length + marketingVocabulary.level6.length} mots`);
   console.log(`📖 ${frenchDictionary.size} mots autorisés`);
 });
+
 
 
 
