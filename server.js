@@ -91,7 +91,7 @@ const commonEnglishWords = new Set([
 ]);
 
 let frenchDictionary = new Set();
-let marketingVocabulary = { easy: [], medium: [], hard: [] };
+let marketingVocabulary = { level1: [], level2: [], level3: [], level4: [], level5: [], level6: [] };
 
 function loadData() {
   try {
@@ -119,7 +119,7 @@ function generateRoomCode() {
 }
 
 function getRandomWord(difficulty = null) {
-  let targetDifficulty = difficulty || ['easy', 'medium', 'hard'][Math.floor(Math.random() * 3)];
+let targetDifficulty = difficulty || ['level1', 'level2', 'level3', 'level4', 'level5', 'level6'][Math.floor(Math.random() * 6)];
   const words = marketingVocabulary[targetDifficulty];
   if (!words || words.length === 0) return null;
   return { ...words[Math.floor(Math.random() * words.length)], difficulty: targetDifficulty };
@@ -714,4 +714,5 @@ server.listen(PORT, () => {
   console.log(`📚 ${marketingVocabulary.easy.length + marketingVocabulary.medium.length + marketingVocabulary.hard.length} mots`);
   console.log(`📖 ${frenchDictionary.size} mots autorisés`);
 });
+
 
