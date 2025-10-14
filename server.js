@@ -18,7 +18,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static('.'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Configuration PostgreSQL
 const pool = new Pool({
@@ -165,7 +165,9 @@ async function saveGameToHistory(gameData) {
 }
 
 // Routes API
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 // Page temporaire pour se promouvoir admin
 app.get('/setup-admin', (req, res) => {
@@ -712,3 +714,4 @@ server.listen(PORT, () => {
   console.log(`📚 ${marketingVocabulary.easy.length + marketingVocabulary.medium.length + marketingVocabulary.hard.length} mots`);
   console.log(`📖 ${frenchDictionary.size} mots autorisés`);
 });
+
