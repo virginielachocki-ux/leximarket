@@ -1639,10 +1639,22 @@ btn.style.background = isActive ? '#667eea' : 'linear-gradient(135deg, #6c757d 0
         }
 
         // === MODES DE JEU ===
-        function startMatchmaking() {
-            socket.emit('join_matchmaking');
-        }
-
+     function startMatchmaking() {
+    if (!socket || !socket.connected) {
+        showMessage('error', 'Connexion au serveur perdue. Reconnexion...');
+        initSocket();
+        setTimeout(() => startMatchmaking(), 1000);
+        return;
+    }
+    
+    if (!currentUser) {
+        showMessage('error', 'Vous devez être connecté');
+        return;
+    }
+    
+    console.log('Démarrage du matchmaking pour:', currentUser);
+    socket.emit('join_matchmaking', { pseudo: currentUser });
+}
         function cancelMatchmaking() {
             socket.emit('leave_matchmaking');
         }
@@ -1861,33 +1873,50 @@ btn.style.background = isActive ? '#667eea' : 'linear-gradient(135deg, #6c757d 0
         }
 
         // === INITIALISATION ===
-        document.addEventListener('DOMContentLoaded', function() {
-            if (loadSession()) {
-                document.getElementById('playerName').textContent = currentUser;
-                document.getElementById('playerScore').textContent = currentUserData.totalScore || 0;
-                showScreen('modeScreen');
-                initSocket();
-            } else {
-                showScreen('loginScreen');
-                initSocket();
-            }
-            
-            document.getElementById('userName').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') login();
-            });
-            
-            document.getElementById('userPassword').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') login();
-            });
-            
-            document.getElementById('gameInput').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') sendInput();
-            });
-            
-            document.getElementById('roomCodeInput').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') joinPrivateRoom();
-            });
-        });
+       // === INITIALISATION ===
+document.addEventListener('DOMContentLoaded', function() {
+    if (loadSession()) {
+        document.getElementById('playerName').textContent = currentUser;
+        document.getElementById('playerScore').textContent = currentUserData.totalScore || 0;
+        showScreen('modeScreen');
+        initSocket();
+    } else {
+        showScreen('loginScreen');
+        showLoginForm(); // Afficher le formulaire de connexion par défaut
+        initSocket();
+    }
+    
+    // Event listeners pour la connexion
+    document.getElementById('loginUserName').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') login();
+    });
+    
+    document.getElementById('loginPassword').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') login();
+    });
+    
+    // Event listeners pour l'inscription
+    document.getElementById('registerUserName').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') document.getElementById('registerEmail').focus();
+    });
+    
+    document.getElementById('registerEmail').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') document.getElementById('registerPassword').focus();
+    });
+    
+    document.getElementById('registerPassword').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') register();
+    });
+    
+    // Event listeners pour le jeu
+    document.getElementById('gameInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendInput();
+    });
+    
+    document.getElementById('roomCodeInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') joinPrivateRoom();
+    });
+});
     </script>
 </body>
 </html>
