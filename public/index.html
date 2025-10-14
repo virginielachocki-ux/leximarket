@@ -1811,36 +1811,49 @@
         }
 
         // === JEU ===
-        function setupNewGame(data) {
-            currentRole = data.yourRole;
-            gameExchanges = [];
-            
-            document.getElementById('gameRound').textContent = `Manche ${data.roundNumber}/${data.maxWords}`;
-            document.getElementById('gameRole').textContent = currentRole === 'giver' ? 'Faites deviner' : 'Devinez';
-            
-            const wordDisplay = document.getElementById('wordDisplay');
-            const wordWaiting = document.getElementById('wordWaiting');
-            
-            if (currentRole === 'giver') {
-                wordDisplay.textContent = data.word.word;
-                wordDisplay.style.display = 'block';
-                wordWaiting.style.display = 'none';
-            } else {
-                wordDisplay.style.display = 'none';
-                wordWaiting.style.display = 'block';
-            }
-            
-            document.getElementById('localPlayerName').textContent = currentUser;
-            document.getElementById('remotePlayerName').textContent = data.players.find(p => p !== currentUser);
-            updateScores(data.scores || {});
-            
-            document.getElementById('exchangesList').innerHTML = '';
-            document.getElementById('gameInput').value = '';
-            document.getElementById('gameInput').placeholder = currentRole === 'giver' ? 
-                'Donnez un indice...' : 'Votre réponse...';
-            
-            showScreen('gameScreen');
-        }
+function setupNewGame(data) {
+  console.log('🎮 Setup nouveau jeu :', data);
+  
+  if (!data.word) {
+    console.error('❌ Erreur : Aucun mot reçu !', data);
+    showMessage('error', 'Erreur de synchronisation');
+    return;
+  }
+  
+  currentRole = data.yourRole;
+  gameExchanges = [];
+  
+  console.log(`   Votre rôle : ${currentRole === 'giver' ? 'DONNEUR' : 'DEVINEUR'}`);
+  console.log(`   Mot : ${currentRole === 'giver' ? data.word.word : '[CACHÉ]'}`);
+  
+  document.getElementById('gameRound').textContent = `Manche ${data.roundNumber}/${data.maxWords}`;
+  document.getElementById('gameRole').textContent = currentRole === 'giver' ? 'Faites deviner' : 'Devinez';
+  
+  const wordDisplay = document.getElementById('wordDisplay');
+  const wordWaiting = document.getElementById('wordWaiting');
+  
+  if (currentRole === 'giver') {
+    wordDisplay.textContent = data.word.word;
+    wordDisplay.style.display = 'block';
+    wordWaiting.style.display = 'none';
+  } else {
+    wordDisplay.style.display = 'none';
+    wordWaiting.style.display = 'block';
+  }
+  
+  const opponentPseudo = data.players.find(p => p !== currentUser);
+  document.getElementById('localPlayerName').textContent = currentUser;
+  document.getElementById('remotePlayerName').textContent = opponentPseudo || 'Adversaire';
+  
+  updateScores(data.scores || {});
+  
+  document.getElementById('exchangesList').innerHTML = '';
+  document.getElementById('gameInput').value = '';
+  document.getElementById('gameInput').placeholder = currentRole === 'giver' ? 
+    'Donnez un indice...' : 'Votre réponse...';
+  
+  showScreen('gameScreen');
+}
 
         function updateScores(scores) {
             const players = Object.keys(scores);
