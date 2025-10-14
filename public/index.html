@@ -1019,8 +1019,12 @@
                     showScreen('modeScreen');
                     showMessage('success', 'Connexion réussie !');
                     
+                    // Initialiser socket et enregistrer l'utilisateur
                     if (!socket || !socket.connected) {
                         initSocket();
+                    } else {
+                        // Si déjà connecté, enregistrer immédiatement
+                        socket.emit('user_login', { pseudo: currentUser });
                     }
                 } else {
                     showMessage('error', data.message || 'Identifiants incorrects');
@@ -1150,6 +1154,15 @@
             
             socket.on('connect', () => {
                 console.log('Connecté au serveur');
+                
+                // Si l'utilisateur est connecté, l'enregistrer auprès du serveur
+                if (currentUser) {
+                    socket.emit('user_login', { pseudo: currentUser });
+                }
+            });
+            
+            socket.on('login_success', (data) => {
+                console.log('Utilisateur enregistré sur le serveur:', data);
             });
             
             socket.on('matchmaking_joined', (data) => {
@@ -1713,10 +1726,14 @@
 
         // === MODES DE JEU ===
         function startMatchmaking() {
+            console.log('=== Tentative de matchmaking ===');
+            console.log('Socket connecté:', socket && socket.connected);
+            console.log('Utilisateur actuel:', currentUser);
+            
             if (!socket || !socket.connected) {
                 showMessage('error', 'Connexion au serveur perdue. Reconnexion...');
                 initSocket();
-                setTimeout(() => startMatchmaking(), 1000);
+                setTimeout(() => startMatchmaking(), 1500);
                 return;
             }
             
@@ -1725,7 +1742,7 @@
                 return;
             }
             
-            console.log('Démarrage du matchmaking pour:', currentUser);
+            console.log('Envoi join_matchmaking pour:', currentUser);
             socket.emit('join_matchmaking', { pseudo: currentUser });
         }
 
@@ -1761,6 +1778,21 @@
         }
 
         function createPrivateRoom() {
+            console.log('=== Tentative de création de salle privée ===');
+            console.log('Socket connecté:', socket && socket.connected);
+            console.log('Utilisateur actuel:', currentUser);
+            
+            if (!socket || !socket.connected) {
+                showMessage('error', 'Connexion au serveur perdue');
+                return;
+            }
+            
+            if (!currentUser) {
+                showMessage('error', 'Vous devez être connecté');
+                return;
+            }
+            
+            console.log('Envoi create_private_room');
             socket.emit('create_private_room');
         }
 
@@ -1953,6 +1985,13 @@
                 document.getElementById('playerScore').textContent = currentUserData.totalScore || 0;
                 showScreen('modeScreen');
                 initSocket();
+                
+                // Attendre que socket soit connecté puis enregistrer l'utilisateur
+                setTimeout(() => {
+                    if (socket && socket.connected && currentUser) {
+                        socket.emit('user_login', { pseudo: currentUser });
+                    }
+                }, 500);
             } else {
                 showScreen('loginScreen');
                 showLoginForm();
