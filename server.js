@@ -429,42 +429,61 @@ app.get('/api/history/:pseudo', async (req, res) => {
 io.on('connection', (socket) => {
   console.log('Connexion:', socket.id);
   
-  socket.on('user_login', async (data) => {
-    const result = await pool.query('SELECT * FROM users WHERE pseudo = $1', [data.pseudo]);
-    if (result.rows.length === 0) return socket.emit('login_error', { message: 'Utilisateur introuvable' });
-    
-    const user = result.rows[0];
-    connectedUsers.set(socket.id, { socketId: socket.id, pseudo: user.pseudo });
-    socket.emit('login_success', {
-      userData: {
-        pseudo: user.pseudo,
-        email: user.email,
-        isAdmin: user.is_admin,
-        totalScore: user.total_score,
-        gamesPlayed: user.games_played,
-        wordsGuessed: user.words_guessed
-      },
-      connectedUsers: connectedUsers.size
-    });
-  });
+ socket.on('user_login', async (data) => {
+  console.log('📝 user_login reçu pour:', data.pseudo);
+  const result = await pool.query('SELECT * FROM users WHERE pseudo = $1', [data.pseudo]);
+  if (result.rows.length === 0) {
+    console.log('❌ Utilisateur introuvable:', data.pseudo);
+    return socket.emit('login_error', { message: 'Utilisateur introuvable' });
+  }
   
-  socket.on('join_matchmaking', () => {
-    const user = connectedUsers.get(socket.id);
-    if (!user) return;
-    matchmakingQueue.push(user);
-    socket.emit('matchmaking_joined', { queuePosition: matchmakingQueue.length });
-    io.emit('queue_update', { playersInQueue: matchmakingQueue.length });
-    setTimeout(() => {
-      if (matchmakingQueue.length >= 2) {
-        const p1 = matchmakingQueue.shift();
-        const p2 = matchmakingQueue.shift();
-        const code = generateRoomCode();
-        createMultiplayerRoom(code, [p1, p2], 'matchmaking');
-        io.to(p1.socketId).emit('match_found', { roomCode: code, opponent: p2.pseudo });
-        io.to(p2.socketId).emit('match_found', { roomCode: code, opponent: p1.pseudo });
-      }
-    }, 1000);
+  const user = result.rows[0];
+  connectedUsers.set(socket.id, { socketId: socket.id, pseudo: user.pseudo });
+  console.log('✅ Utilisateur enregistré:', user.pseudo, '- Total connectés:', connectedUsers.size);
+  
+  socket.emit('login_success', {
+    userData: {
+      pseudo: user.pseudo,
+      email: user.email,
+      isAdmin: user.is_admin,
+      totalScore: user.total_score,
+      gamesPlayed: user.games_played,
+      wordsGuessed: user.words_guessed
+    },
+    connectedUsers: connectedUsers.size
   });
+});
+  
+socket.on('join_matchmaking', () => {
+  const user = connectedUsers.get(socket.id);
+  console.log('🔍 join_matchmaking reçu - Socket:', socket.id);
+  console.log('   Utilisateur trouvé:', user ? user.pseudo : 'AUCUN');
+  console.log('   Total users connectés:', connectedUsers.size);
+  
+  if (!user) {
+    console.log('❌ Utilisateur non enregistré dans connectedUsers');
+    socket.emit('matchmaking_error', { message: 'Vous devez être connecté' });
+    return;
+  }
+  
+  matchmakingQueue.push(user);
+  console.log('✅ Ajouté à la queue. Queue length:', matchmakingQueue.length);
+  
+  socket.emit('matchmaking_joined', { queuePosition: matchmakingQueue.length });
+  io.emit('queue_update', { playersInQueue: matchmakingQueue.length });
+  
+  setTimeout(() => {
+    if (matchmakingQueue.length >= 2) {
+      const p1 = matchmakingQueue.shift();
+      const p2 = matchmakingQueue.shift();
+      const code = generateRoomCode();
+      console.log('🎮 Match trouvé:', p1.pseudo, 'vs', p2.pseudo);
+      createMultiplayerRoom(code, [p1, p2], 'matchmaking');
+      io.to(p1.socketId).emit('match_found', { roomCode: code, opponent: p2.pseudo });
+      io.to(p2.socketId).emit('match_found', { roomCode: code, opponent: p1.pseudo });
+    }
+  }, 1000);
+});
   
   socket.on('leave_matchmaking', () => {
     const user = connectedUsers.get(socket.id);
@@ -474,13 +493,22 @@ io.on('connection', (socket) => {
     }
   });
   
-  socket.on('create_private_room', () => {
-    const user = connectedUsers.get(socket.id);
-    if (!user) return;
-    const code = generateRoomCode();
-    privateRooms.set(code, { host: user, players: [user], status: 'waiting', createdAt: Date.now() });
-    socket.emit('private_room_created', { roomCode: code });
-  });
+ socket.on('create_private_room', () => {
+  const user = connectedUsers.get(socket.id);
+  console.log('🏠 create_private_room reçu - Socket:', socket.id);
+  console.log('   Utilisateur trouvé:', user ? user.pseudo : 'AUCUN');
+  
+  if (!user) {
+    console.log('❌ Utilisateur non enregistré');
+    socket.emit('room_error', { message: 'Vous devez être connecté' });
+    return;
+  }
+  
+  const code = generateRoomCode();
+  privateRooms.set(code, { host: user, players: [user], status: 'waiting', createdAt: Date.now() });
+  console.log('✅ Salle privée créée:', code, 'par', user.pseudo);
+  socket.emit('private_room_created', { roomCode: code });
+});
   
   socket.on('join_private_room', (data) => {
     const user = connectedUsers.get(socket.id);
@@ -714,6 +742,7 @@ server.listen(PORT, () => {
   console.log(`📚 ${marketingVocabulary.level1.length + marketingVocabulary.level2.length + marketingVocabulary.level3.length + marketingVocabulary.level4.length + marketingVocabulary.level5.length + marketingVocabulary.level6.length} mots`);
   console.log(`📖 ${frenchDictionary.size} mots autorisés`);
 });
+
 
 
 
