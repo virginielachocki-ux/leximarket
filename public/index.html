@@ -1234,7 +1234,7 @@
                 })
                 .catch(err => {
                     console.error('Erreur:', err);
-                    vocabularyData = { easy: [], medium: [], hard: [] };
+                    vocabularyData = { level1: [], level2: [], level3: [], level4: [], level5: [], level6: [] };
                     displayWords();
                 });
         }
@@ -1243,18 +1243,21 @@
             const wordsList = document.getElementById('wordsList');
             let allWords = [];
             
-            ['easy', 'medium', 'hard'].forEach(difficulty => {
-                if (currentFilter === 'all' || currentFilter === difficulty) {
+['level1', 'level2', 'level3', 'level4', 'level5', 'level6'].forEach(difficulty => {
+    if (currentFilter === 'all' || currentFilter === difficulty) {
                     (vocabularyData[difficulty] || []).forEach((word, index) => {
                         allWords.push({ ...word, difficulty, originalIndex: index });
                     });
                 }
             });
 
-            document.getElementById('totalWordsCount').textContent = 
-                (vocabularyData.easy?.length || 0) + 
-                (vocabularyData.medium?.length || 0) + 
-                (vocabularyData.hard?.length || 0);
+           document.getElementById('totalWordsCount').textContent = 
+    (vocabularyData.level1?.length || 0) + 
+    (vocabularyData.level2?.length || 0) + 
+    (vocabularyData.level3?.length || 0) + 
+    (vocabularyData.level4?.length || 0) + 
+    (vocabularyData.level5?.length || 0) + 
+    (vocabularyData.level6?.length || 0);
 
             if (allWords.length === 0) {
                 wordsList.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">Aucun mot</p>';
@@ -1265,7 +1268,14 @@
                 <div style="background: white; padding: 20px; border-radius: 10px; margin-bottom: 15px; border: 2px solid #e1e5e9;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                         <strong style="font-size: 20px;">${word.word}</strong>
-                        <span style="background: ${word.difficulty === 'easy' ? '#28a745' : word.difficulty === 'medium' ? '#ffc107' : '#dc3545'}; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: bold;">${word.difficulty.toUpperCase()}</span>
+                        <span style="background: ${
+    word.difficulty === 'level1' ? '#28a745' : 
+    word.difficulty === 'level2' ? '#20c997' : 
+    word.difficulty === 'level3' ? '#17a2b8' : 
+    word.difficulty === 'level4' ? '#ffc107' : 
+    word.difficulty === 'level5' ? '#fd7e14' : 
+    '#dc3545'
+}; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: bold;">${word.difficulty.toUpperCase()}</span>
                     </div>
                     <div style="color: #666; margin-bottom: 15px;">${word.definition}</div>
                     ${word.botClues && word.botClues.length > 0 ? `
@@ -1291,15 +1301,11 @@
 
         function filterWords(filter) {
             currentFilter = filter;
-            ['filterAll', 'filterEasy', 'filterMedium', 'filterHard'].forEach(id => {
-                const btn = document.getElementById(id);
+['filterAll', 'filterLevel1', 'filterLevel2', 'filterLevel3', 'filterLevel4', 'filterLevel5', 'filterLevel6'].forEach(id => {                const btn = document.getElementById(id);
                 if (btn) {
-                    btn.style.background = (
-                        (id === 'filterAll' && filter === 'all') ||
-                        (id === 'filterEasy' && filter === 'easy') ||
-                        (id === 'filterMedium' && filter === 'medium') ||
-                        (id === 'filterHard' && filter === 'hard')
-                    ) ? '#667eea' : 'linear-gradient(135deg, #6c757d 0%, #495057 100%)';
+                    const isActive = (id === 'filterAll' && filter === 'all') || 
+                 id === 'filter' + filter.charAt(0).toUpperCase() + filter.slice(1);
+btn.style.background = isActive ? '#667eea' : 'linear-gradient(135deg, #6c757d 0%, #495057 100%)';
                 }
             });
             displayWords();
@@ -1337,7 +1343,7 @@
                     showMessage('success', 'Mot ajouté !');
                     document.getElementById('adminWord').value = '';
                     document.getElementById('adminDefinition').value = '';
-                    document.getElementById('adminDifficulty').value = 'easy';
+                    document.getElementById('adminDifficulty').value = 'level1';
                     document.getElementById('adminClue1').value = '';
                     document.getElementById('adminClue2').value = '';
                     document.getElementById('adminClue3').value = '';
