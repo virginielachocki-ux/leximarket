@@ -148,7 +148,7 @@ function calculateScore(timeUsed, cluesUsed, difficulty) {
   const baseScore = 100;
   const timeBonus = Math.max(0, 60 - timeUsed) * 2;
   const clueBonus = (4 - cluesUsed) * 25;
-  const diffMultiplier = { easy: 1, medium: 1.5, hard: 2 };
+  const diffMultiplier = { level1: 1, level2: 1.2, level3: 1.4, level4: 1.6, level5: 1.8, level6: 2 };
   const diffBonus = Math.round(baseScore * (diffMultiplier[difficulty] - 1));
   return Math.round(baseScore + timeBonus + clueBonus + diffBonus);
 }
@@ -714,6 +714,7 @@ server.listen(PORT, () => {
   console.log(`📚 ${marketingVocabulary.easy.length + marketingVocabulary.medium.length + marketingVocabulary.hard.length} mots`);
   console.log(`📖 ${frenchDictionary.size} mots autorisés`);
 });
+
 
 
 
