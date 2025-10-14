@@ -1401,7 +1401,7 @@ btn.style.background = isActive ? '#667eea' : 'linear-gradient(135deg, #6c757d 0
             reader.onload = function(e) {
                 try {
                     const importedData = JSON.parse(e.target.result);
-                    if (!importedData.easy || !importedData.medium || !importedData.hard) {
+                    if (!importedData.level1 || !importedData.level2 || !importedData.level3 || !importedData.level4 || !importedData.level5 || !importedData.level6) {
                         throw new Error('Format invalide');
                     }
 
