@@ -1175,9 +1175,6 @@
                 currentRoom = data.roomCode;
                 currentGameType = 'multiplayer';
                 showMessage('success', `Match trouvé contre ${data.opponent} !`);
-                setTimeout(() => {
-                    socket.emit('join_room', data.roomCode);
-                }, 2000);
             });
             
             socket.on('matchmaking_left', () => {
