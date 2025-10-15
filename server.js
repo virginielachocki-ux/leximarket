@@ -795,11 +795,12 @@ setTimeout(() => {
     }, 1000);
   }
 }, 5000);
+}
 
 server.listen(PORT, () => {
   console.log(`🎯 LexiMarket sur le port ${PORT}`);
-const totalWords = Object.values(marketingVocabulary).reduce((sum, arr) => sum + arr.length, 0);
-console.log(`📚 ${totalWords} mots`);
+  const totalWords = Object.values(marketingVocabulary).reduce((sum, arr) => sum + arr.length, 0);
+  console.log(`📚 ${totalWords} mots`);
   console.log(`📖 ${frenchDictionary.size} mots autorisés`);
 });
 
