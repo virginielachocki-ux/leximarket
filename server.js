@@ -79,9 +79,9 @@ let matchmakingQueue = [];
 let activeRooms = new Map();
 let privateRooms = new Map();
 
-const DATA_DIR = './data';
-const VOCAB_FILE = `${DATA_DIR}/vocabulary.json`;
-const DICT_FILE = `${DATA_DIR}/dictionary.json`;
+const DATA_DIR = path.join(__dirname, 'data');
+const VOCAB_FILE = path.join(DATA_DIR, 'vocabulary.json');
+const DICT_FILE = path.join(DATA_DIR, 'dictionary.json');
 
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR);
 
@@ -810,6 +810,7 @@ server.listen(PORT, () => {
   console.log(`📚 ${totalWords} mots`);
   console.log(`📖 ${frenchDictionary.size} mots autorisés`);
 });
+
 
 
 
