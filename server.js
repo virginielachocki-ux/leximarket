@@ -663,17 +663,6 @@ socket.on('join_matchmaking', () => {
           timeLeft: 60
         });
       });
-      
-      room.timer = setInterval(() => {
-        room.timeLeft--;
-        io.to(code).emit('timer_update', room.timeLeft);
-        if (room.timeLeft <= 0) {
-          clearInterval(room.timer);
-          endRound(code, false, "Temps écoulé");
-        }
-      }, 1000);
-    }
-  }
 });
     // Démarrer le timer
     room.timer = setInterval(() => {
@@ -903,6 +892,7 @@ server.listen(PORT, () => {
   console.log(`📚 ${totalWords} mots`);
   console.log(`📖 ${frenchDictionary.size} mots autorisés`);
 });
+
 
 
 
