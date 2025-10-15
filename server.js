@@ -466,23 +466,103 @@ socket.on('join_matchmaking', () => {
     return;
   }
   
+  // ✅ Vérifier si déjà dans la queue
+  if (matchmakingQueue.find(p => p.socketId === socket.id)) {
+    console.log('⚠️ Utilisateur déjà dans la queue');
+    return;
+  }
+  
   matchmakingQueue.push(user);
   console.log('✅ Ajouté à la queue. Queue length:', matchmakingQueue.length);
   
   socket.emit('matchmaking_joined', { queuePosition: matchmakingQueue.length });
   io.emit('queue_update', { playersInQueue: matchmakingQueue.length });
   
-  setTimeout(() => {
-    if (matchmakingQueue.length >= 2) {
-      const p1 = matchmakingQueue.shift();
-      const p2 = matchmakingQueue.shift();
-      const code = generateRoomCode();
-      console.log('🎮 Match trouvé:', p1.pseudo, 'vs', p2.pseudo);
-      createMultiplayerRoom(code, [p1, p2], 'matchmaking');
-      io.to(p1.socketId).emit('match_found', { roomCode: code, opponent: p2.pseudo });
-      io.to(p2.socketId).emit('match_found', { roomCode: code, opponent: p1.pseudo });
-    }
-  }, 1000);
+  // ✅ Chercher un match immédiatement
+  if (matchmakingQueue.length >= 2) {
+    const p1 = matchmakingQueue.shift();
+    const p2 = matchmakingQueue.shift();
+    const code = generateRoomCode();
+    
+    console.log('🎮 Match trouvé:', p1.pseudo, 'vs', p2.pseudo, '| Room:', code);
+    
+    // ✅ ÉTAPE 1 : Créer la room avec le mot
+    const firstWord = getRandomWord();
+    activeRooms.set(code, {
+      type: 'matchmaking',
+      players: [p1, p2],
+      gameState: 'waiting_players', // ✅ État d'attente
+      currentWord: firstWord,
+      clues: [],
+      turnsLeft: 4,
+      timeLeft: 60,
+      currentGuesser: 0, // p1 devine en premier
+      scores: { [p1.pseudo]: 0, [p2.pseudo]: 0 },
+      wordsPlayed: 1,
+      maxWords: 4,
+      startTime: null,
+      joinedPlayers: 0 // ✅ Compteur de joueurs ayant rejoint
+    });
+    
+    console.log(`   Mot généré: ${firstWord.word} | Devineur: ${p1.pseudo}`);
+    
+    // ✅ ÉTAPE 2 : Faire rejoindre les sockets à la room
+    io.sockets.sockets.get(p1.socketId)?.join(code);
+    io.sockets.sockets.get(p2.socketId)?.join(code);
+    
+    // ✅ ÉTAPE 3 : Notifier les joueurs du match
+    io.to(p1.socketId).emit('match_found', { 
+      roomCode: code, 
+      opponent: p2.pseudo 
+    });
+    io.to(p2.socketId).emit('match_found', { 
+      roomCode: code, 
+      opponent: p1.pseudo 
+    });
+    
+    // ✅ ÉTAPE 4 : Démarrer la partie après un court délai
+    setTimeout(() => {
+      const room = activeRooms.get(code);
+      if (!room) return;
+      
+      room.gameState = 'playing';
+      room.startTime = Date.now();
+      
+      console.log(`🎯 Démarrage partie ${code}`);
+      
+      // Envoyer game_start à chaque joueur
+      room.players.forEach((p, playerIndex) => {
+        const isGuesser = playerIndex === room.currentGuesser;
+        
+        console.log(`📤 game_start → ${p.pseudo} (${isGuesser ? 'DEVINEUR' : 'DONNEUR'})`);
+        
+        io.to(p.socketId).emit('game_start', {
+          word: room.currentWord, // ✅ CRITIQUE : Envoyer l'objet complet
+          players: room.players.map(p => p.pseudo),
+          yourRole: isGuesser ? 'guesser' : 'giver',
+          roundNumber: room.wordsPlayed,
+          maxWords: room.maxWords,
+          scores: room.scores,
+          clues: [],
+          turnsLeft: 4,
+          timeLeft: 60
+        });
+      });
+      
+      // Démarrer le timer
+      room.timer = setInterval(() => {
+        room.timeLeft--;
+        io.to(code).emit('timer_update', room.timeLeft);
+        if (room.timeLeft <= 0) {
+          clearInterval(room.timer);
+          endRound(code, false, "Temps écoulé");
+        }
+      }, 1000);
+    }, 2000); // 2 secondes pour laisser le temps aux clients de traiter
+    
+    // Mettre à jour la queue
+    io.emit('queue_update', { playersInQueue: matchmakingQueue.length });
+  }
 });
   
   socket.on('leave_matchmaking', () => {
@@ -556,30 +636,45 @@ socket.on('join_matchmaking', () => {
   const room = activeRooms.get(code);
   if (!room || room.type === 'training') return;
   
-  socket.join(code);
-  
-  if (room.gameState === 'starting') {
-    room.gameState = 'playing';
-    room.startTime = Date.now(); // 
+  // ✅ Seulement pour salles privées qui utilisent encore ce système
+  if (room.type === 'private' && room.gameState === 'waiting_players') {
+    socket.join(code);
+    room.joinedPlayers++;
     
-    room.players.forEach((p, playerIndex) => {
-      const isGuesser = playerIndex === room.currentGuesser;
+    console.log(`🔗 ${connectedUsers.get(socket.id)?.pseudo} a rejoint ${code} (${room.joinedPlayers}/2)`);
+    
+    // Démarrer quand les 2 joueurs ont rejoint
+    if (room.joinedPlayers === 2) {
+      room.gameState = 'playing';
+      room.startTime = Date.now();
       
-      console.log(`📤 Envoi game_start à ${p.pseudo} (index ${playerIndex}) → Rôle : ${isGuesser ? 'DEVINEUR' : 'DONNEUR'}`);
-      
-      io.to(p.socketId).emit('game_start', {
-        word: room.currentWord,
-        players: room.players.map(p => p.pseudo),
-        yourRole: isGuesser ? 'guesser' : 'giver', 
-        roundNumber: room.wordsPlayed,
-        maxWords: room.maxWords,
-        scores: room.scores,
-        clues: [],
-        turnsLeft: 4,
-        timeLeft: 60
+      room.players.forEach((p, playerIndex) => {
+        const isGuesser = playerIndex === room.currentGuesser;
+        
+        io.to(p.socketId).emit('game_start', {
+          word: room.currentWord,
+          players: room.players.map(p => p.pseudo),
+          yourRole: isGuesser ? 'guesser' : 'giver',
+          roundNumber: room.wordsPlayed,
+          maxWords: room.maxWords,
+          scores: room.scores,
+          clues: [],
+          turnsLeft: 4,
+          timeLeft: 60
+        });
       });
-    });
-    
+      
+      room.timer = setInterval(() => {
+        room.timeLeft--;
+        io.to(code).emit('timer_update', room.timeLeft);
+        if (room.timeLeft <= 0) {
+          clearInterval(room.timer);
+          endRound(code, false, "Temps écoulé");
+        }
+      }, 1000);
+    }
+  }
+});
     // Démarrer le timer
     room.timer = setInterval(() => {
       room.timeLeft--;
@@ -629,30 +724,28 @@ socket.on('join_matchmaking', () => {
 });
 
 function createMultiplayerRoom(code, players, type) {
+  const firstWord = getRandomWord();
+  
   activeRooms.set(code, {
-    type,
-    players,
-    gameState: 'starting',
-    clues: [],
-    turnsLeft: 4,
-    timeLeft: 60,
-    currentGuesser: 1, // Joueur d'index 1 commence DEVINEUR
-    scores: { [players[0].pseudo]: 0, [players[1].pseudo]: 0 },
-    wordsPlayed: 1,
+    type, 
+    players, 
+    gameState: 'waiting_players', // ✅ En attente que les joueurs rejoignent
+    currentWord: firstWord,
+    clues: [], 
+    turnsLeft: 4, 
+    timeLeft: 60, 
+    currentGuesser: 0,
+    scores: { [players[0].pseudo]: 0, [players[1].pseudo]: 0 }, 
+    wordsPlayed: 1, 
     maxWords: 4,
-    currentWord: null,
     startTime: null,
-    timer: null
+    joinedPlayers: 0 // ✅ Compteur
   });
+  
+  console.log(`🏠 Salle ${type} créée : ${code}`);
+  console.log(`   Joueurs : ${players[0].pseudo} vs ${players[1].pseudo}`);
+  console.log(`   Mot : ${firstWord.word} | Devineur : ${players[0].pseudo}`);
 }
-
-/*
-⚠️ IMPORTANT :
-NE PAS laisser de `socket.on('join_room', ...)` ici au niveau global.
-Ce handler doit être DANS `io.on('connection', (socket) => { ... })`
-Tu as déjà un handler dans ta 1re partie → conserve celui-là
-et supprime toute duplication ici.
-*/
 
 function giveBotClue(code) {
   const room = activeRooms.get(code);
@@ -810,6 +903,7 @@ server.listen(PORT, () => {
   console.log(`📚 ${totalWords} mots`);
   console.log(`📖 ${frenchDictionary.size} mots autorisés`);
 });
+
 
 
 
