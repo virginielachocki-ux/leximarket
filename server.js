@@ -629,26 +629,48 @@ socket.on('join_matchmaking', () => {
 });
 
 function createMultiplayerRoom(code, players, type) {
-  const firstWord = getRandomWord(); // ✅ AJOUT : Générer le premier mot immédiatement
-  
   activeRooms.set(code, {
-    type, 
-    players, 
-    gameState: 'starting', 
-    currentWord: firstWord, // ✅ AJOUT : Définir le mot dès la création
-    clues: [], 
-    turnsLeft: 4, 
-    timeLeft: 60, 
-    currentGuesser: 0, // ✅ CHANGEMENT : Index 0 = premier joueur devine, index 1 donne
-    scores: { [players[0].pseudo]: 0, [players[1].pseudo]: 0 }, 
-    wordsPlayed: 1, 
-    maxWords: 4,
-    startTime: null // ✅ AJOUT : Sera défini au démarrage réel
+    type,
+    players,
+    gameState: 'starting',
+    clues: [],
+    turnsLeft: 4,
+    timeLeft: 60,
+    currentGuesser: 1, // Joueur 2 commence DEVINEUR
+    scores: { [players[0].pseudo]: 0, [players[1].pseudo]: 0 },
+    wordsPlayed: 1,
+    maxWords: 4
   });
-  
-  console.log(`🎮 Salle créée : ${code} | Joueurs : ${players[0].pseudo} vs ${players[1].pseudo}`);
-  console.log(`   Premier mot : ${firstWord.word} | Devineur : ${players[0].pseudo}`);
 }
+
+socket.on('join_room', (code) => {
+  const room = activeRooms.get(code);
+  if (!room || room.type === 'training') return;
+  socket.join(code);
+
+  if (room.gameState === 'starting') {
+    room.gameState = 'playing';
+    room.currentWord = getRandomWord();
+    room.startTime = Date.now();
+
+    // Alternance : currentGuesser alterne à chaque mot
+    room.players.forEach((p, i) => {
+      const isGiver = (i + 1) !== room.currentGuesser;
+      io.to(p.socketId).emit('game_start', {
+        word: isGiver ? room.currentWord : null, // donneur connaît le mot
+        players: room.players.map(pl => pl.pseudo),
+        yourRole: isGiver ? 'giver' : 'guesser',
+        roundNumber: room.wordsPlayed,
+        maxWords: room.maxWords,
+        scores: room.scores,
+        clues: [],
+        turnsLeft: 4,
+        timeLeft: 60
+      });
+    });
+  }
+});
+
 
 function giveBotClue(code) {
   const room = activeRooms.get(code);
@@ -742,7 +764,7 @@ setTimeout(() => {
     room.clues = [];
     room.turnsLeft = 4;
     room.timeLeft = 60;
-    room.currentGuesser = room.currentGuesser === 0 ? 1 : 0;
+    room.currentGuesser = room.currentGuesser === 1 ? 2 : 1;
     room.startTime = Date.now();
     
     console.log(`🔄 Manche ${room.wordsPlayed}/${room.maxWords} | Mot : ${room.currentWord.word} | Devineur : ${room.players[room.currentGuesser].pseudo}`);
@@ -776,9 +798,11 @@ setTimeout(() => {
 
 server.listen(PORT, () => {
   console.log(`🎯 LexiMarket sur le port ${PORT}`);
-  console.log(`📚 ${marketingVocabulary.level1.length + marketingVocabulary.level2.length + marketingVocabulary.level3.length + marketingVocabulary.level4.length + marketingVocabulary.level5.length + marketingVocabulary.level6.length} mots`);
+const totalWords = Object.values(marketingVocabulary).reduce((sum, arr) => sum + arr.length, 0);
+console.log(`📚 ${totalWords} mots`);
   console.log(`📖 ${frenchDictionary.size} mots autorisés`);
 });
+
 
 
 
