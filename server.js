@@ -636,46 +636,30 @@ function createMultiplayerRoom(code, players, type) {
     clues: [],
     turnsLeft: 4,
     timeLeft: 60,
-    currentGuesser: 1, // Joueur 2 commence DEVINEUR
+    currentGuesser: 1, // Joueur d'index 1 commence DEVINEUR
     scores: { [players[0].pseudo]: 0, [players[1].pseudo]: 0 },
     wordsPlayed: 1,
-    maxWords: 4
+    maxWords: 4,
+    currentWord: null,
+    startTime: null,
+    timer: null
   });
 }
 
-socket.on('join_room', (code) => {
-  const room = activeRooms.get(code);
-  if (!room || room.type === 'training') return;
-  socket.join(code);
-
-  if (room.gameState === 'starting') {
-    room.gameState = 'playing';
-    room.currentWord = getRandomWord();
-    room.startTime = Date.now();
-
-    // Alternance : currentGuesser alterne à chaque mot
-    room.players.forEach((p, i) => {
-      const isGiver = (i + 1) !== room.currentGuesser;
-      io.to(p.socketId).emit('game_start', {
-        word: isGiver ? room.currentWord : null, // donneur connaît le mot
-        players: room.players.map(pl => pl.pseudo),
-        yourRole: isGiver ? 'giver' : 'guesser',
-        roundNumber: room.wordsPlayed,
-        maxWords: room.maxWords,
-        scores: room.scores,
-        clues: [],
-        turnsLeft: 4,
-        timeLeft: 60
-      });
-    });
-  }
-});
-
+/*
+⚠️ IMPORTANT :
+NE PAS laisser de `socket.on('join_room', ...)` ici au niveau global.
+Ce handler doit être DANS `io.on('connection', (socket) => { ... })`
+Tu as déjà un handler dans ta 1re partie → conserve celui-là
+et supprime toute duplication ici.
+*/
 
 function giveBotClue(code) {
   const room = activeRooms.get(code);
   if (!room || room.type !== 'training') return;
-  if (room.botClueIndex >= room.currentWord.botClues.length) return endTrainingRound(code, false, "Plus d'indices");
+  if (room.botClueIndex >= room.currentWord.botClues.length) {
+    return endTrainingRound(code, false, "Plus d'indices");
+  }
   const clue = room.currentWord.botClues[room.botClueIndex];
   room.botClueIndex++;
   room.clues.push(clue);
@@ -692,7 +676,10 @@ async function endTrainingRound(code, success, message) {
   if (success) {
     points = calculateScore(timeUsed, room.clues.length, room.currentWord.difficulty);
     room.scores[room.player.pseudo] += points;
-    await pool.query('UPDATE users SET total_score = total_score + $1, words_guessed = words_guessed + 1 WHERE pseudo = $2', [points, room.player.pseudo]);
+    await pool.query(
+      'UPDATE users SET total_score = total_score + $1, words_guessed = words_guessed + 1 WHERE pseudo = $2',
+      [points, room.player.pseudo]
+    );
   }
   const isLast = room.wordsPlayed >= room.maxWords;
   io.to(code).emit('round_end', {
@@ -701,32 +688,42 @@ async function endTrainingRound(code, success, message) {
     wordsPlayed: room.wordsPlayed, maxWords: room.maxWords, isLastWord: isLast
   });
   if (isLast) {
-    await saveGameToHistory({ type: 'training', player: room.player.pseudo, difficulty: room.difficulty, finalScore: room.scores[room.player.pseudo], wordsGuessed: room.wordsPlayed });
+    await saveGameToHistory({
+      type: 'training',
+      player: room.player.pseudo,
+      difficulty: room.difficulty,
+      finalScore: room.scores[room.player.pseudo],
+      wordsGuessed: room.wordsPlayed
+    });
     setTimeout(() => {
       io.to(code).emit('game_ended', { finalScores: room.scores });
       activeRooms.delete(code);
     }, 5000);
   } else {
     setTimeout(() => {
-      if (activeRooms.has(code)) {
-        room.wordsPlayed++;
-        room.currentWord = getRandomWord(room.difficulty);
-        room.botClueIndex = 0;
-        room.clues = [];
-        room.turnsLeft = 4;
-        room.timeLeft = 60;
-        room.startTime = Date.now();
-        io.to(code).emit('next_round', { word: room.currentWord, roundNumber: room.wordsPlayed, maxWords: room.maxWords, scores: room.scores });
-        setTimeout(() => giveBotClue(code), 2000);
-        room.timer = setInterval(() => {
-          room.timeLeft--;
-          io.to(code).emit('timer_update', room.timeLeft);
-          if (room.timeLeft <= 0) {
-            clearInterval(room.timer);
-            endTrainingRound(code, false, "Temps écoulé");
-          }
-        }, 1000);
-      }
+      if (!activeRooms.has(code)) return;
+      room.wordsPlayed++;
+      room.currentWord = getRandomWord(room.difficulty);
+      room.botClueIndex = 0;
+      room.clues = [];
+      room.turnsLeft = 4;
+      room.timeLeft = 60;
+      room.startTime = Date.now();
+      io.to(code).emit('next_round', {
+        word: room.currentWord,
+        roundNumber: room.wordsPlayed,
+        maxWords: room.maxWords,
+        scores: room.scores
+      });
+      setTimeout(() => giveBotClue(code), 2000);
+      room.timer = setInterval(() => {
+        room.timeLeft--;
+        io.to(code).emit('timer_update', room.timeLeft);
+        if (room.timeLeft <= 0) {
+          clearInterval(room.timer);
+          endTrainingRound(code, false, "Temps écoulé");
+        }
+      }, 1000);
     }, 5000);
   }
 }
@@ -741,7 +738,10 @@ async function endRound(code, success, message) {
     points = calculateScore(timeUsed, room.clues.length, room.currentWord.difficulty);
     for (const p of room.players) {
       room.scores[p.pseudo] += points;
-      await pool.query('UPDATE users SET total_score = total_score + $1, words_guessed = words_guessed + 1 WHERE pseudo = $2', [points, p.pseudo]);
+      await pool.query(
+        'UPDATE users SET total_score = total_score + $1, words_guessed = words_guessed + 1 WHERE pseudo = $2',
+        [points, p.pseudo]
+      );
     }
   }
   const isLast = room.wordsPlayed >= room.maxWords;
@@ -750,52 +750,59 @@ async function endRound(code, success, message) {
     timeUsed, cluesUsed: room.clues.length, pointsEarned: points, scores: room.scores,
     wordsPlayed: room.wordsPlayed, maxWords: room.maxWords, isLastWord: isLast
   });
+
   if (isLast) {
-    await saveGameToHistory({ type: room.type || 'multiplayer', players: room.players.map(p => p.pseudo), finalScores: room.scores, wordsPlayed: room.wordsPlayed });
+    await saveGameToHistory({
+      type: room.type || 'multiplayer',
+      players: room.players.map(p => p.pseudo),
+      finalScores: room.scores,
+      wordsPlayed: room.wordsPlayed
+    });
     setTimeout(() => {
       io.to(code).emit('game_ended', { finalScores: room.scores });
       activeRooms.delete(code);
     }, 5000);
   } else {
-setTimeout(() => {
-  if (activeRooms.has(code)) {
-    room.wordsPlayed++;
-    room.currentWord = getRandomWord();
-    room.clues = [];
-    room.turnsLeft = 4;
-    room.timeLeft = 60;
-    room.currentGuesser = room.currentGuesser === 1 ? 2 : 1;
-    room.startTime = Date.now();
-    
-    console.log(`🔄 Manche ${room.wordsPlayed}/${room.maxWords} | Mot : ${room.currentWord.word} | Devineur : ${room.players[room.currentGuesser].pseudo}`);
-    
-    room.players.forEach((p, playerIndex) => {
-      const isGuesser = playerIndex === room.currentGuesser;
-      
-      io.to(p.socketId).emit('next_round', {
-        word: room.currentWord,
-        yourRole: isGuesser ? 'guesser' : 'giver',
-        roundNumber: room.wordsPlayed,
-        maxWords: room.maxWords,
-        players: room.players.map(p => p.pseudo),
-        scores: room.scores,
-        clues: [],
-        turnsLeft: 4,
-        timeLeft: 60
+    setTimeout(() => {
+      if (!activeRooms.has(code)) return;
+      room.wordsPlayed++;
+      room.currentWord = getRandomWord();
+      room.clues = [];
+      room.turnsLeft = 4;
+      room.timeLeft = 60;
+      // ✅ CORRECTION : alterne entre 0 et 1 (et pas 2 !)
+      room.currentGuesser = room.currentGuesser === 1 ? 0 : 1;
+      room.startTime = Date.now();
+
+      console.log(`🔄 Manche ${room.wordsPlayed}/${room.maxWords} | Mot : ${room.currentWord.word} | Devineur : ${room.players[room.currentGuesser].pseudo}`);
+
+      // On envoie à chacun SON rôle + (optionnel) le mot côté donneur
+      room.players.forEach((p, playerIndex) => {
+        const isGuesser = playerIndex === room.currentGuesser;
+        io.to(p.socketId).emit('next_round', {
+          word: isGuesser ? null : room.currentWord, // donneur voit le mot
+          yourRole: isGuesser ? 'guesser' : 'giver',
+          roundNumber: room.wordsPlayed,
+          maxWords: room.maxWords,
+          players: room.players.map(pp => pp.pseudo),
+          scores: room.scores,
+          clues: [],
+          turnsLeft: 4,
+          timeLeft: 60
+        });
       });
-    });
-    
-    room.timer = setInterval(() => {
-      room.timeLeft--;
-      io.to(code).emit('timer_update', room.timeLeft);
-      if (room.timeLeft <= 0) {
-        clearInterval(room.timer);
-        endRound(code, false, "Temps écoulé");
-      }
-    }, 1000);
+
+      room.timer = setInterval(() => {
+        room.timeLeft--;
+        io.to(code).emit('timer_update', room.timeLeft);
+        if (room.timeLeft <= 0) {
+          clearInterval(room.timer);
+          endRound(code, false, "Temps écoulé");
+        }
+      }, 1000);
+    }, 5000);
   }
-}, 5000);
-}
+} // ←←← ✅ cette accolade ferme BIEN endRound !
 
 server.listen(PORT, () => {
   console.log(`🎯 LexiMarket sur le port ${PORT}`);
@@ -803,6 +810,15 @@ server.listen(PORT, () => {
   console.log(`📚 ${totalWords} mots`);
   console.log(`📖 ${frenchDictionary.size} mots autorisés`);
 });
+
+
+server.listen(PORT, () => {
+  console.log(`🎯 LexiMarket sur le port ${PORT}`);
+  const totalWords = Object.values(marketingVocabulary).reduce((sum, arr) => sum + arr.length, 0);
+  console.log(`📚 ${totalWords} mots`);
+  console.log(`📖 ${frenchDictionary.size} mots autorisés`);
+});
+
 
 
 
