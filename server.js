@@ -588,31 +588,100 @@ io.on('connection', (socket) => {
     socket.emit('private_room_created', { roomCode: code });
   });
   
-  socket.on('join_private_room', (data) => {
-    const user = connectedUsers.get(socket.id);
-    if (!user) return;
+socket.on('join_private_room', (data) => {
+  const user = connectedUsers.get(socket.id);
+  if (!user) return;
+  
+  const room = privateRooms.get(data.roomCode);
+  if (!room) return socket.emit('room_error', { message: 'Room introuvable' });
+  if (room.players.length >= 2) return socket.emit('room_error', { message: 'Room complète' });
+  
+  room.players.push(user);
+  
+  if (room.players.length === 2) {
+    const code = data.roomCode;
+    console.log('🎮 Salle privée complète:', code, '|', room.players[0].pseudo, 'vs', room.players[1].pseudo);
     
-    const room = privateRooms.get(data.roomCode);
-    if (!room) return socket.emit('room_error', { message: 'Room introuvable' });
-    if (room.players.length >= 2) return socket.emit('room_error', { message: 'Room complète' });
+    // ✅ Créer la room de jeu avec le mot
+    const firstWord = getRandomWord();
+    activeRooms.set(code, {
+      type: 'private',
+      players: room.players,
+      gameState: 'waiting_players',
+      currentWord: firstWord,
+      clues: [],
+      turnsLeft: 4,
+      timeLeft: 60,
+      currentGuesser: 0,
+      scores: { [room.players[0].pseudo]: 0, [room.players[1].pseudo]: 0 },
+      wordsPlayed: 1,
+      maxWords: 4,
+      startTime: null,
+      joinedPlayers: 0
+    });
     
-    room.players.push(user);
+    console.log(`   Mot généré: ${firstWord.word} | Devineur: ${room.players[0].pseudo}`);
     
-    if (room.players.length === 2) {
-      createMultiplayerRoom(data.roomCode, room.players, 'private');
-      io.to(room.players[0].socketId).emit('match_found', { 
-        roomCode: data.roomCode, 
-        opponent: room.players[1].pseudo 
+    // ✅ Faire rejoindre les sockets à la room
+    const socket1 = io.sockets.sockets.get(room.players[0].socketId);
+    const socket2 = io.sockets.sockets.get(room.players[1].socketId);
+    if (socket1) socket1.join(code);
+    if (socket2) socket2.join(code);
+    
+    // ✅ Notifier les joueurs
+    io.to(room.players[0].socketId).emit('match_found', { 
+      roomCode: code, 
+      opponent: room.players[1].pseudo 
+    });
+    io.to(room.players[1].socketId).emit('match_found', { 
+      roomCode: code, 
+      opponent: room.players[0].pseudo 
+    });
+    
+    setTimeout(() => {
+      const gameRoom = activeRooms.get(code);
+      if (!gameRoom) return;
+      
+      gameRoom.gameState = 'playing';
+      gameRoom.startTime = Date.now();
+      
+      console.log(`🎯 Démarrage partie privée ${code}`);
+      
+      gameRoom.players.forEach((p, playerIndex) => {
+        const isGuesser = playerIndex === gameRoom.currentGuesser;
+        
+        console.log(`📤 game_start → ${p.pseudo} (${isGuesser ? 'DEVINEUR' : 'DONNEUR'})`);
+        
+        io.to(p.socketId).emit('game_start', {
+          word: gameRoom.currentWord,
+          players: gameRoom.players.map(p => p.pseudo),
+          yourRole: isGuesser ? 'guesser' : 'giver',
+          roundNumber: gameRoom.wordsPlayed,
+          maxWords: gameRoom.maxWords,
+          scores: gameRoom.scores,
+          clues: [],
+          turnsLeft: 4,
+          timeLeft: 60
+        });
       });
-      io.to(room.players[1].socketId).emit('match_found', { 
-        roomCode: data.roomCode, 
-        opponent: room.players[0].pseudo 
-      });
-      privateRooms.delete(data.roomCode);
-    } else {
-      socket.emit('waiting_for_opponent', { roomCode: data.roomCode });
-    }
-  });
+      
+      // Démarrer le timer
+      gameRoom.timer = setInterval(() => {
+        gameRoom.timeLeft--;
+        io.to(code).emit('timer_update', gameRoom.timeLeft);
+        if (gameRoom.timeLeft <= 0) {
+          clearInterval(gameRoom.timer);
+          endRound(code, false, "Temps écoulé");
+        }
+      }, 1000);
+    }, 2000);
+    
+    // Supprimer de la liste des salles privées en attente
+    privateRooms.delete(data.roomCode);
+  } else {
+    socket.emit('waiting_for_opponent', { roomCode: data.roomCode });
+  }
+});
   
   socket.on('start_training', (data) => {
     const user = connectedUsers.get(socket.id);
@@ -660,49 +729,7 @@ io.on('connection', (socket) => {
       }
     }, 1000);
   });
-  
-  socket.on('join_room', (code) => {
-    const room = activeRooms.get(code);
-    if (!room || room.type === 'training') return;
-    
-    if (room.type === 'private' && room.gameState === 'waiting_players') {
-      socket.join(code);
-      room.joinedPlayers++;
-      
-      console.log(`🔗 ${connectedUsers.get(socket.id)?.pseudo} a rejoint ${code} (${room.joinedPlayers}/2)`);
-      
-      if (room.joinedPlayers === 2) {
-        room.gameState = 'playing';
-        room.startTime = Date.now();
-        
-        room.players.forEach((p, playerIndex) => {
-          const isGuesser = playerIndex === room.currentGuesser;
-          
-          io.to(p.socketId).emit('game_start', {
-            word: room.currentWord,
-            players: room.players.map(p => p.pseudo),
-            yourRole: isGuesser ? 'guesser' : 'giver',
-            roundNumber: room.wordsPlayed,
-            maxWords: room.maxWords,
-            scores: room.scores,
-            clues: [],
-            turnsLeft: 4,
-            timeLeft: 60
-          });
-        });
-        
-        room.timer = setInterval(() => {
-          room.timeLeft--;
-          io.to(code).emit('timer_update', room.timeLeft);
-          if (room.timeLeft <= 0) {
-            clearInterval(room.timer);
-            endRound(code, false, "Temps écoulé");
-          }
-        }, 1000);
-      }
-    }
-  });
-  
+   
   socket.on('give_clue', (data) => {
     const room = activeRooms.get(data.roomCode);
     if (!room || room.type === 'training') return;
@@ -759,30 +786,6 @@ io.on('connection', (socket) => {
     matchmakingQueue = matchmakingQueue.filter(p => p.socketId !== socket.id);
   });
 });
-
-function createMultiplayerRoom(code, players, type) {
-  const firstWord = getRandomWord();
-  
-  activeRooms.set(code, {
-    type,
-    players,
-    gameState: 'waiting_players',
-    currentWord: firstWord,
-    clues: [],
-    turnsLeft: 4,
-    timeLeft: 60,
-    currentGuesser: 0,
-    scores: { [players[0].pseudo]: 0, [players[1].pseudo]: 0 },
-    wordsPlayed: 1,
-    maxWords: 4,
-    startTime: null,
-    joinedPlayers: 0
-  });
-  
-  console.log(`🏠 Salle ${type} créée : ${code}`);
-  console.log(`   Joueurs : ${players[0].pseudo} vs ${players[1].pseudo}`);
-  console.log(`   Mot : ${firstWord.word} | Devineur : ${players[0].pseudo}`);
-}
 
 function giveBotClue(code) {
   const room = activeRooms.get(code);
@@ -977,3 +980,4 @@ server.listen(PORT, () => {
   console.log(`📚 ${totalWords} mots`);
   console.log(`📖 ${frenchDictionary.size} mots autorisés`);
 });
+
