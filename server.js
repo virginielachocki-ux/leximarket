@@ -425,7 +425,6 @@ app.get('/api/history/:pseudo', async (req, res) => {
   }
 });
 
-// WebSocket - Code de jeu identique à avant
 // WebSocket - Code de jeu
 io.on('connection', (socket) => {
   console.log('Connexion:', socket.id);
@@ -971,3 +970,10 @@ async function endRound(code, success, message) {
     }, 5000);
   }
 }
+
+server.listen(PORT, () => {
+  console.log(`🎯 LexiMarket sur le port ${PORT}`);
+  const totalWords = Object.values(marketingVocabulary).reduce((sum, arr) => sum + arr.length, 0);
+  console.log(`📚 ${totalWords} mots`);
+  console.log(`📖 ${frenchDictionary.size} mots autorisés`);
+});
