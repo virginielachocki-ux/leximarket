@@ -93,7 +93,7 @@
     {
       "word": "GMS",
       "definition": "Grande et moyenne surface alimentaire",
-      "botClues": ["magasin", "alimentaire", "grande", "surface"],
+      "botClues": ["magasin", "alimentaire", "grande", "sigle"],
       "forbiddenWords": []
     },
     {
