@@ -1,554 +1,1074 @@
 {
   "level1": [
     {
-      "word": "CANNIBALISATION",
+      "word": "cannibalisation",
       "definition": "Concurrence entre produits d'une même marque",
-      "botClues": ["concurrent", "marque", "identique", "manger"],
+      "botClues": [
+        "concurrent",
+        "marque",
+        "identique",
+        "manger"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "CIBLE",
+      "word": "cible",
       "definition": "Consommateurs visés par une stratégie",
-      "botClues": ["consommateurs", "visés", "stratégie", "cœur"],
+      "botClues": [
+        "consommateurs",
+        "visés",
+        "stratégie",
+        "cœur"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "CIRCUITCOURT",
+      "word": "circuitcourt",
       "definition": "Distribution directe du producteur au consommateur",
-      "botClues": ["producteur", "distributeur", "direct", "court"],
-      "forbiddenWords": ["circuit"]
+      "botClues": [
+        "producteur",
+        "distributeur",
+        "direct",
+        "court"
+      ],
+      "forbiddenWords": [
+        "circuit"
+      ]
     },
     {
-      "word": "CIRCUITLONG",
+      "word": "circuitlong",
       "definition": "Distribution avec nombreux intermédiaires",
-      "botClues": ["intermédiaires", "nombreux", "enchaînement", "long"],
-      "forbiddenWords": ["circuit"]
+      "botClues": [
+        "intermédiaires",
+        "nombreux",
+        "enchaînement",
+        "long"
+      ],
+      "forbiddenWords": [
+        "circuit"
+      ]
     },
     {
-      "word": "CNIL",
+      "word": "cnil",
       "definition": "Commission nationale informatique et libertés",
-      "botClues": ["données", "france", "protection", "informatique"],
+      "botClues": [
+        "données",
+        "france",
+        "protection",
+        "informatique"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "EMPATHIE",
+      "word": "empathie",
       "definition": "Capacité à comprendre et ressentir les émotions du client",
-      "botClues": ["écoute", "client", "compréhension", "ressentir"],
+      "botClues": [
+        "écoute",
+        "client",
+        "compréhension",
+        "ressentir"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "BENCHMARKING",
+      "word": "benchmarking",
       "definition": "Comparaison des pratiques avec les concurrents",
-      "botClues": ["comparaison", "pratiques", "concurrents", "meilleures"],
+      "botClues": [
+        "comparaison",
+        "pratiques",
+        "concurrents",
+        "meilleures"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "ETUDEQUALITATIVE",
+      "word": "etudequalitative",
       "definition": "Étude basée sur des entretiens approfondis",
-      "botClues": ["entretien", "verbatim", "motivations", "qualitative"],
-      "forbiddenWords": ["étude"]
+      "botClues": [
+        "entretien",
+        "verbatim",
+        "motivations",
+        "qualitative"
+      ],
+      "forbiddenWords": [
+        "étude"
+      ]
     },
     {
-      "word": "ETUDEQUANTITATIVE",
+      "word": "etudequantitative",
       "definition": "Étude statistique sur un large échantillon",
-      "botClues": ["sondage", "statistiques", "pourcentage", "quantitative"],
-      "forbiddenWords": ["étude"]
+      "botClues": [
+        "sondage",
+        "statistiques",
+        "pourcentage",
+        "quantitative"
+      ],
+      "forbiddenWords": [
+        "étude"
+      ]
     },
     {
-      "word": "FACING",
+      "word": "facing",
       "definition": "Nombre de produits visibles en rayon",
-      "botClues": ["rayon", "front", "visibilité", "produits"],
+      "botClues": [
+        "rayon",
+        "front",
+        "visibilité",
+        "produits"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "FRANCHISE",
+      "word": "franchise",
       "definition": "Enseigne commerciale avec concept commun",
-      "botClues": ["enseigne", "concept", "indépendant", "redevance"],
+      "botClues": [
+        "enseigne",
+        "concept",
+        "indépendant",
+        "redevance"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "FREELANCE",
+      "word": "freelance",
       "definition": "Travailleur indépendant en mission",
-      "botClues": ["indépendant", "mission", "autonome", "statut"],
+      "botClues": [
+        "indépendant",
+        "mission",
+        "autonome",
+        "statut"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "GAMME",
+      "word": "gamme",
       "definition": "Ensemble cohérent de produits d'une famille",
-      "botClues": ["famille", "produits", "cohérence", "besoins"],
+      "botClues": [
+        "famille",
+        "produits",
+        "cohérence",
+        "besoins"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "GIRAFE",
+      "word": "girafe",
       "definition": "Promotion offrant une quantité supplémentaire gratuite",
-      "botClues": ["promotion", "quantité", "plus", "gratuit"],
+      "botClues": [
+        "promotion",
+        "quantité",
+        "plus",
+        "gratuit"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "GLOBALISATION",
+      "word": "globalisation",
       "definition": "Stratégie internationale standardisée",
-      "botClues": ["monde", "standardisation", "stratégie", "international"],
+      "botClues": [
+        "monde",
+        "standardisation",
+        "stratégie",
+        "international"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "GMS",
+      "word": "gms",
       "definition": "Grande et moyenne surface alimentaire",
-      "botClues": ["magasin", "alimentaire", "grande", "sigle"],
+      "botClues": [
+        "magasin",
+        "alimentaire",
+        "grande",
+        "surface"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "GONDOLE",
+      "word": "gondole",
       "definition": "Meuble de présentation des produits en rayon",
-      "botClues": ["rayon", "meuble", "présentation", "produits"],
+      "botClues": [
+        "rayon",
+        "meuble",
+        "présentation",
+        "produits"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "HARDDISCOUNT",
+      "word": "harddiscount",
       "definition": "Magasin à prix bas avec choix limité",
-      "botClues": ["prix", "bas", "limité", "coûts"],
-      "forbiddenWords": ["discount", "hard"]
+      "botClues": [
+        "prix",
+        "bas",
+        "limité",
+        "coûts"
+      ],
+      "forbiddenWords": [
+        "discount",
+        "hard"
+      ]
     },
     {
-      "word": "HORSMEDIAS",
+      "word": "horsmedias",
       "definition": "Communication directe hors médias traditionnels",
-      "botClues": ["communication", "relationnel", "direct", "événement"],
-      "forbiddenWords": ["médias", "hors"]
+      "botClues": [
+        "communication",
+        "relationnel",
+        "direct",
+        "événement"
+      ],
+      "forbiddenWords": [
+        "médias",
+        "hors"
+      ]
     },
     {
-      "word": "HYPERMARCHE",
+      "word": "hypermarche",
       "definition": "Magasin de très grande surface en périphérie",
-      "botClues": ["magasin", "périphérie", "géant", "surface"],
+      "botClues": [
+        "magasin",
+        "périphérie",
+        "géant",
+        "surface"
+      ],
       "forbiddenWords": []
     }
   ],
   "level2": [
     {
-      "word": "INCENTIVE",
+      "word": "incentive",
       "definition": "Technique de motivation des vendeurs par challenge",
-      "botClues": ["motivation", "vendeurs", "challenge", "prime"],
+      "botClues": [
+        "motivation",
+        "vendeurs",
+        "challenge",
+        "prime"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "INNOVATION",
+      "word": "innovation",
       "definition": "Création et lancement d'une nouveauté",
-      "botClues": ["nouveauté", "recherche", "lancement", "rupture"],
+      "botClues": [
+        "nouveauté",
+        "recherche",
+        "lancement",
+        "rupture"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "LARGEUR",
+      "word": "largeur",
       "definition": "Variété de références dans une gamme",
-      "botClues": ["gamme", "variété", "références", "nombre"],
+      "botClues": [
+        "gamme",
+        "variété",
+        "références",
+        "nombre"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "LINEAIRE",
+      "word": "lineaire",
       "definition": "Longueur de rayon en mètres pour les produits",
-      "botClues": ["rayon", "mètre", "longueur", "facing"],
+      "botClues": [
+        "rayon",
+        "mètre",
+        "longueur",
+        "facing"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "MAGASIN",
+      "word": "magasin",
       "definition": "Point de vente physique",
-      "botClues": ["boutique", "commerce", "enseigne", "surface"],
+      "botClues": [
+        "boutique",
+        "commerce",
+        "enseigne",
+        "surface"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "MARCHE",
+      "word": "marche",
       "definition": "Rencontre entre offre et demande",
-      "botClues": ["économie", "offre", "demande", "échange"],
+      "botClues": [
+        "économie",
+        "offre",
+        "demande",
+        "échange"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "MARKETING",
+      "word": "marketing",
       "definition": "Ensemble des actions pour commercialiser",
-      "botClues": ["stratégie", "vente", "promotion", "client"],
+      "botClues": [
+        "stratégie",
+        "vente",
+        "promotion",
+        "client"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "MARQUE",
+      "word": "marque",
       "definition": "Nom commercial identifiant un produit",
-      "botClues": ["nom", "logo", "identité", "enseigne"],
+      "botClues": [
+        "nom",
+        "logo",
+        "identité",
+        "enseigne"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "MERCHANDISING",
+      "word": "merchandising",
       "definition": "Optimisation de la présentation en magasin",
-      "botClues": ["rayon", "présentation", "disposition", "vente"],
+      "botClues": [
+        "rayon",
+        "présentation",
+        "disposition",
+        "vente"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "MDD",
+      "word": "mdd",
       "definition": "Marque de distributeur propre à l'enseigne",
-      "botClues": ["marque", "distributeur", "enseigne", "propre"],
+      "botClues": [
+        "marque",
+        "distributeur",
+        "enseigne",
+        "propre"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "MIXMARKETING",
+      "word": "mixmarketing",
       "definition": "Combinaison des quatre P du marketing",
-      "botClues": ["produit", "prix", "place", "promotion"],
-      "forbiddenWords": ["marketing", "mix"]
+      "botClues": [
+        "produit",
+        "prix",
+        "place",
+        "promotion"
+      ],
+      "forbiddenWords": [
+        "marketing",
+        "mix"
+      ]
     },
     {
-      "word": "NOTORIETE",
+      "word": "notoriete",
       "definition": "Degré de connaissance d'une marque",
-      "botClues": ["connaissance", "marque", "image", "réputation"],
+      "botClues": [
+        "connaissance",
+        "marque",
+        "image",
+        "réputation"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "OMNICANAL",
+      "word": "omnicanal",
       "definition": "Stratégie utilisant tous les canaux de distribution",
-      "botClues": ["canaux", "intégration", "stratégie", "cohérence"],
+      "botClues": [
+        "canaux",
+        "intégration",
+        "stratégie",
+        "cohérence"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "PDV",
+      "word": "pdv",
       "definition": "Point de vente où s'effectue la transaction",
-      "botClues": ["magasin", "vente", "lieu", "boutique"],
+      "botClues": [
+        "magasin",
+        "vente",
+        "lieu",
+        "boutique"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "POSITIONNEMENT",
+      "word": "positionnement",
       "definition": "Place occupée par la marque dans l'esprit du consommateur",
-      "botClues": ["image", "perception", "concurrence", "différenciation"],
+      "botClues": [
+        "image",
+        "perception",
+        "concurrence",
+        "différenciation"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "PRIX",
+      "word": "prix",
       "definition": "Valeur monétaire d'un produit",
-      "botClues": ["argent", "coût", "tarif", "euros"],
+      "botClues": [
+        "argent",
+        "coût",
+        "tarif",
+        "euros"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "PRODUIT",
+      "word": "produit",
       "definition": "Bien ou service commercialisé",
-      "botClues": ["article", "marchandise", "bien", "service"],
+      "botClues": [
+        "article",
+        "marchandise",
+        "bien",
+        "service"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "PROFONDEUR",
+      "word": "profondeur",
       "definition": "Nombre de variantes dans une ligne de produits",
-      "botClues": ["variantes", "ligne", "déclinaisons", "choix"],
+      "botClues": [
+        "variantes",
+        "ligne",
+        "déclinaisons",
+        "choix"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "PROMOTION",
+      "word": "promotion",
       "definition": "Action temporaire pour stimuler les ventes",
-      "botClues": ["réduction", "offre", "temporaire", "stimuler"],
+      "botClues": [
+        "réduction",
+        "offre",
+        "temporaire",
+        "stimuler"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "PROSPECT",
+      "word": "prospect",
       "definition": "Client potentiel à conquérir",
-      "botClues": ["potentiel", "futur", "conquérir", "cible"],
+      "botClues": [
+        "potentiel",
+        "futur",
+        "conquérir",
+        "cible"
+      ],
       "forbiddenWords": []
     }
   ],
   "level3": [
     {
-      "word": "PUBLICITE",
+      "word": "publicite",
       "definition": "Communication payante pour promouvoir",
-      "botClues": ["communication", "média", "annonce", "campagne"],
-      "forbiddenWords": ["pub"]
+      "botClues": [
+        "communication",
+        "média",
+        "annonce",
+        "campagne"
+      ],
+      "forbiddenWords": [
+        "pub"
+      ]
     },
     {
-      "word": "QUALITE",
+      "word": "qualite",
       "definition": "Ensemble des caractéristiques répondant aux attentes",
-      "botClues": ["norme", "satisfaction", "excellence", "standard"],
+      "botClues": [
+        "norme",
+        "satisfaction",
+        "excellence",
+        "standard"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "RAYON",
+      "word": "rayon",
       "definition": "Espace dédié à une famille de produits",
-      "botClues": ["linéaire", "gondole", "famille", "espace"],
+      "botClues": [
+        "linéaire",
+        "gondole",
+        "famille",
+        "espace"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "REFERENCE",
+      "word": "reference",
       "definition": "Produit distinct dans l'assortiment",
-      "botClues": ["produit", "article", "code", "distinct"],
+      "botClues": [
+        "produit",
+        "article",
+        "code",
+        "distinct"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "REMISE",
+      "word": "remise",
       "definition": "Réduction accordée sur le prix",
-      "botClues": ["réduction", "rabais", "diminution", "avantage"],
+      "botClues": [
+        "réduction",
+        "rabais",
+        "diminution",
+        "avantage"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "RENTABILITE",
+      "word": "rentabilite",
       "definition": "Capacité à générer des bénéfices",
-      "botClues": ["profit", "bénéfice", "performance", "résultat"],
+      "botClues": [
+        "profit",
+        "bénéfice",
+        "performance",
+        "résultat"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "RESEAU",
+      "word": "reseau",
       "definition": "Ensemble de points de vente liés",
-      "botClues": ["magasins", "franchise", "enseigne", "groupe"],
+      "botClues": [
+        "magasins",
+        "franchise",
+        "enseigne",
+        "groupe"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "SATISFACTION",
+      "word": "satisfaction",
       "definition": "État positif après achat",
-      "botClues": ["content", "heureux", "besoin", "comblé"],
+      "botClues": [
+        "content",
+        "heureux",
+        "besoin",
+        "comblé"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "SEGMENTATION",
+      "word": "segmentation",
       "definition": "Division du marché en groupes homogènes",
-      "botClues": ["diviser", "groupes", "critères", "cibler"],
-      "forbiddenWords": ["segment"]
+      "botClues": [
+        "diviser",
+        "groupes",
+        "critères",
+        "cibler"
+      ],
+      "forbiddenWords": [
+        "segment"
+      ]
     },
     {
-      "word": "SERVICE",
+      "word": "service",
       "definition": "Prestation immatérielle vendue",
-      "botClues": ["prestation", "immatériel", "conseil", "aide"],
+      "botClues": [
+        "prestation",
+        "immatériel",
+        "conseil",
+        "aide"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "SOLDE",
+      "word": "solde",
       "definition": "Vente à prix réduit pour écouler les stocks",
-      "botClues": ["réduction", "stock", "prix", "période"],
+      "botClues": [
+        "réduction",
+        "stock",
+        "prix",
+        "période"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "STOCK",
+      "word": "stock",
       "definition": "Quantité de marchandises disponibles",
-      "botClues": ["réserve", "marchandises", "entrepôt", "quantité"],
+      "botClues": [
+        "réserve",
+        "marchandises",
+        "entrepôt",
+        "quantité"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "STRATEGIE",
+      "word": "strategie",
       "definition": "Plan d'action à long terme",
-      "botClues": ["plan", "objectif", "long", "terme"],
+      "botClues": [
+        "plan",
+        "objectif",
+        "long",
+        "terme"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "SUPERMARCHE",
+      "word": "supermarche",
       "definition": "Magasin de moyenne surface alimentaire",
-      "botClues": ["magasin", "alimentaire", "moyenne", "surface"],
+      "botClues": [
+        "magasin",
+        "alimentaire",
+        "moyenne",
+        "surface"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "TARIF",
+      "word": "tarif",
       "definition": "Liste des prix pratiqués",
-      "botClues": ["prix", "catalogue", "grille", "barème"],
+      "botClues": [
+        "prix",
+        "catalogue",
+        "grille",
+        "barème"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "TETE",
+      "word": "tete",
       "definition": "Extrémité d'un rayon très visible",
-      "botClues": ["gondole", "début", "visible", "promotion"],
+      "botClues": [
+        "gondole",
+        "début",
+        "visible",
+        "promotion"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "TICKETMOYEN",
+      "word": "ticketmoyen",
       "definition": "Montant moyen dépensé par client",
-      "botClues": ["panier", "moyen", "montant", "dépense"],
-      "forbiddenWords": ["ticket"]
+      "botClues": [
+        "panier",
+        "moyen",
+        "montant",
+        "dépense"
+      ],
+      "forbiddenWords": [
+        "ticket"
+      ]
     },
     {
-      "word": "TRAFIC",
+      "word": "trafic",
       "definition": "Nombre de visiteurs en magasin",
-      "botClues": ["fréquentation", "visiteurs", "flux", "clients"],
+      "botClues": [
+        "fréquentation",
+        "visiteurs",
+        "flux",
+        "clients"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "VENTE",
+      "word": "vente",
       "definition": "Action de céder un bien contre paiement",
-      "botClues": ["commerce", "transaction", "céder", "échanger"],
-      "forbiddenWords": ["vendre"]
+      "botClues": [
+        "commerce",
+        "transaction",
+        "céder",
+        "échanger"
+      ],
+      "forbiddenWords": [
+        "vendre"
+      ]
     },
     {
-      "word": "ZONE",
+      "word": "zone",
       "definition": "Territoire géographique de chalandise",
-      "botClues": ["territoire", "géographique", "chalandise", "secteur"],
+      "botClues": [
+        "territoire",
+        "géographique",
+        "chalandise",
+        "secteur"
+      ],
       "forbiddenWords": []
     }
   ],
   "level4": [
     {
-      "word": "ACTIONNAIRE",
+      "word": "actionnaire",
       "definition": "Propriétaire de parts d'une société",
-      "botClues": ["action", "capital", "dividende", "propriétaire"],
-      "forbiddenWords": ["action"]
+      "botClues": [
+        "action",
+        "capital",
+        "dividende",
+        "propriétaire"
+      ],
+      "forbiddenWords": [
+        "action"
+      ]
     },
     {
-      "word": "ANALYSE",
+      "word": "analyse",
       "definition": "Étude détaillée d'une situation",
-      "botClues": ["étude", "examen", "diagnostic", "évaluation"],
-      "forbiddenWords": ["analyser"]
+      "botClues": [
+        "étude",
+        "examen",
+        "diagnostic",
+        "évaluation"
+      ],
+      "forbiddenWords": [
+        "analyser"
+      ]
     },
     {
-      "word": "ASSORTIMENT",
+      "word": "assortiment",
       "definition": "Ensemble des produits proposés",
-      "botClues": ["choix", "variété", "sélection", "offre"],
+      "botClues": [
+        "choix",
+        "variété",
+        "sélection",
+        "offre"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "ATTRACTIVITE",
+      "word": "attractivite",
       "definition": "Capacité à attirer les clients",
-      "botClues": ["attirer", "séduire", "attraction", "pouvoir"],
-      "forbiddenWords": ["attirer", "attractif"]
+      "botClues": [
+        "attirer",
+        "séduire",
+        "attraction",
+        "pouvoir"
+      ],
+      "forbiddenWords": [
+        "attirer",
+        "attractif"
+      ]
     },
     {
-      "word": "BESOIN",
+      "word": "besoin",
       "definition": "Manque à combler chez le consommateur",
-      "botClues": ["manque", "désir", "nécessité", "attente"],
+      "botClues": [
+        "manque",
+        "désir",
+        "nécessité",
+        "attente"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "BUDGET",
+      "word": "budget",
       "definition": "Prévision des recettes et dépenses",
-      "botClues": ["prévision", "dépenses", "finances", "plan"],
+      "botClues": [
+        "prévision",
+        "dépenses",
+        "finances",
+        "plan"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "CHIFFREDAFFAIRES",
+      "word": "chiffredaffaires",
       "definition": "Total des ventes sur une période",
-      "botClues": ["ventes", "total", "recettes", "montant"],
-      "forbiddenWords": ["chiffre", "affaires"]
+      "botClues": [
+        "ventes",
+        "total",
+        "recettes",
+        "montant"
+      ],
+      "forbiddenWords": [
+        "chiffre",
+        "affaires"
+      ]
     },
     {
-      "word": "CLIENTELE",
+      "word": "clientele",
       "definition": "Ensemble des clients d'une entreprise",
-      "botClues": ["clients", "ensemble", "fidèles", "base"],
-      "forbiddenWords": ["client"]
+      "botClues": [
+        "clients",
+        "ensemble",
+        "fidèles",
+        "base"
+      ],
+      "forbiddenWords": [
+        "client"
+      ]
     },
     {
-      "word": "COMMERCE",
+      "word": "commerce",
       "definition": "Activité d'achat et vente",
-      "botClues": ["vente", "achat", "négoce", "échange"],
+      "botClues": [
+        "vente",
+        "achat",
+        "négoce",
+        "échange"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "COMMUNICATION",
+      "word": "communication",
       "definition": "Transmission d'informations vers la cible",
-      "botClues": ["message", "information", "publicité", "média"],
-      "forbiddenWords": ["communiquer"]
+      "botClues": [
+        "message",
+        "information",
+        "publicité",
+        "média"
+      ],
+      "forbiddenWords": [
+        "communiquer"
+      ]
     }
   ],
   "level5": [
     {
-      "word": "CONCURRENCE",
+      "word": "concurrence",
       "definition": "Rivalité entre entreprises sur un marché",
-      "botClues": ["rival", "compétition", "adversaire", "opposant"],
-      "forbiddenWords": ["concurrent"]
+      "botClues": [
+        "rival",
+        "compétition",
+        "adversaire",
+        "opposant"
+      ],
+      "forbiddenWords": [
+        "concurrent"
+      ]
     },
     {
-      "word": "CONSOMMATEUR",
+      "word": "consommateur",
       "definition": "Personne qui utilise un bien ou service",
-      "botClues": ["acheteur", "client", "utilisateur", "usager"],
-      "forbiddenWords": ["consommer", "consommation"]
+      "botClues": [
+        "acheteur",
+        "client",
+        "utilisateur",
+        "usager"
+      ],
+      "forbiddenWords": [
+        "consommer",
+        "consommation"
+      ]
     },
     {
-      "word": "DISTRIBUTION",
+      "word": "distribution",
       "definition": "Acheminement des produits vers les clients",
-      "botClues": ["circuit", "canal", "livraison", "réseau"],
-      "forbiddenWords": ["distribuer"]
+      "botClues": [
+        "circuit",
+        "canal",
+        "livraison",
+        "réseau"
+      ],
+      "forbiddenWords": [
+        "distribuer"
+      ]
     },
     {
-      "word": "ENSEIGNE",
+      "word": "enseigne",
       "definition": "Nom commercial d'un réseau de magasins",
-      "botClues": ["marque", "nom", "réseau", "commercial"],
+      "botClues": [
+        "marque",
+        "nom",
+        "réseau",
+        "commercial"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "ENTREPRISE",
+      "word": "entreprise",
       "definition": "Organisation produisant biens ou services",
-      "botClues": ["société", "organisation", "firme", "compagnie"],
+      "botClues": [
+        "société",
+        "organisation",
+        "firme",
+        "compagnie"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "FIDELISATION",
+      "word": "fidelisation",
       "definition": "Actions pour conserver les clients",
-      "botClues": ["garder", "retenir", "fidèle", "programme"],
-      "forbiddenWords": ["fidèle", "fidéliser"]
+      "botClues": [
+        "garder",
+        "retenir",
+        "fidèle",
+        "programme"
+      ],
+      "forbiddenWords": [
+        "fidèle",
+        "fidéliser"
+      ]
     },
     {
-      "word": "FOURNISSEUR",
+      "word": "fournisseur",
       "definition": "Entreprise qui livre des marchandises",
-      "botClues": ["livrer", "approvisionner", "vendeur", "grossiste"],
-      "forbiddenWords": ["fournir"]
+      "botClues": [
+        "livrer",
+        "approvisionner",
+        "vendeur",
+        "grossiste"
+      ],
+      "forbiddenWords": [
+        "fournir"
+      ]
     },
     {
-      "word": "GESTION",
+      "word": "gestion",
       "definition": "Administration et organisation d'une activité",
-      "botClues": ["administrer", "organiser", "diriger", "manager"],
-      "forbiddenWords": ["gérer"]
+      "botClues": [
+        "administrer",
+        "organiser",
+        "diriger",
+        "manager"
+      ],
+      "forbiddenWords": [
+        "gérer"
+      ]
     },
     {
-      "word": "GROSSISTE",
+      "word": "grossiste",
       "definition": "Intermédiaire achetant en grande quantité",
-      "botClues": ["intermédiaire", "volume", "détaillant", "gros"],
+      "botClues": [
+        "intermédiaire",
+        "volume",
+        "détaillant",
+        "gros"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "IMAGE",
+      "word": "image",
       "definition": "Représentation mentale de la marque",
-      "botClues": ["perception", "réputation", "notoriété", "marque"],
+      "botClues": [
+        "perception",
+        "réputation",
+        "notoriété",
+        "marque"
+      ],
       "forbiddenWords": []
     }
   ],
   "level6": [
     {
-      "word": "IMPLANTATION",
+      "word": "implantation",
       "definition": "Organisation spatiale des produits en rayon",
-      "botClues": ["disposition", "agencement", "organisation", "rayon"],
-      "forbiddenWords": ["implanter"]
+      "botClues": [
+        "disposition",
+        "agencement",
+        "organisation",
+        "rayon"
+      ],
+      "forbiddenWords": [
+        "implanter"
+      ]
     },
     {
-      "word": "LOGISTIQUE",
+      "word": "logistique",
       "definition": "Gestion des flux physiques de marchandises",
-      "botClues": ["transport", "stockage", "flux", "approvisionnement"],
+      "botClues": [
+        "transport",
+        "stockage",
+        "flux",
+        "approvisionnement"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "MANAGEMENT",
+      "word": "management",
       "definition": "Direction et animation d'une équipe",
-      "botClues": ["diriger", "équipe", "manager", "encadrer"],
-      "forbiddenWords": ["manager"]
+      "botClues": [
+        "diriger",
+        "équipe",
+        "manager",
+        "encadrer"
+      ],
+      "forbiddenWords": [
+        "manager"
+      ]
     },
     {
-      "word": "NEGOCIATION",
+      "word": "negociation",
       "definition": "Discussion pour parvenir à un accord",
-      "botClues": ["discussion", "accord", "compromis", "débat"],
-      "forbiddenWords": ["négocier"]
+      "botClues": [
+        "discussion",
+        "accord",
+        "compromis",
+        "débat"
+      ],
+      "forbiddenWords": [
+        "négocier"
+      ]
     },
     {
-      "word": "OBJECTIF",
+      "word": "objectif",
       "definition": "But à atteindre",
-      "botClues": ["but", "cible", "finalité", "résultat"],
+      "botClues": [
+        "but",
+        "cible",
+        "finalité",
+        "résultat"
+      ],
       "forbiddenWords": []
     },
     {
-      "word": "ORGANISATION",
+      "word": "organisation",
       "definition": "Structure et fonctionnement d'une entreprise",
-      "botClues": ["structure", "agencement", "coordination", "système"],
-      "forbiddenWords": ["organiser"]
+      "botClues": [
+        "structure",
+        "agencement",
+        "coordination",
+        "système"
+      ],
+      "forbiddenWords": [
+        "organiser"
+      ]
     },
     {
-      "word": "PARTENAIRE",
+      "word": "partenaire",
       "definition": "Entreprise collaborant pour un projet commun",
-      "botClues": ["collaborateur", "allié", "associé", "coopération"],
-      "forbiddenWords": ["partenariat"]
+      "botClues": [
+        "collaborateur",
+        "allié",
+        "associé",
+        "coopération"
+      ],
+      "forbiddenWords": [
+        "partenariat"
+      ]
     },
     {
-      "word": "PERFORMANCE",
+      "word": "performance",
       "definition": "Niveau de résultat atteint",
-      "botClues": ["résultat", "efficacité", "réussite", "succès"],
-      "forbiddenWords": ["performant"]
+      "botClues": [
+        "résultat",
+        "efficacité",
+        "réussite",
+        "succès"
+      ],
+      "forbiddenWords": [
+        "performant"
+      ]
     },
     {
-      "word": "PLANIFICATION",
+      "word": "planification",
       "definition": "Organisation prévisionnelle des actions",
-      "botClues": ["plan", "prévoir", "organiser", "programmation"],
-      "forbiddenWords": ["planifier", "plan"]
+      "botClues": [
+        "plan",
+        "prévoir",
+        "organiser",
+        "programmation"
+      ],
+      "forbiddenWords": [
+        "planifier",
+        "plan"
+      ]
     },
     {
-      "word": "STRATEGIE",
+      "word": "strategie",
       "definition": "Ensemble des moyens pour atteindre un objectif",
-      "botClues": ["plan", "tactique", "approche", "méthode"],
-      "forbiddenWords": ["stratégique"]
+      "botClues": [
+        "plan",
+        "tactique",
+        "approche",
+        "méthode"
+      ],
+      "forbiddenWords": [
+        "stratégique"
+      ]
     }
   ]
 }
